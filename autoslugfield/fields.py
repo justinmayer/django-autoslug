@@ -3,9 +3,11 @@
 # Original snippet: http://djangosnippets.org/snippets/728/
 # Reworked by Andy Mikhailenko <neithere at gmail dot com> in Sep 2008
 
-from pytils.translit import slugify
-
+# django
 from django.db.models.fields import SlugField
+
+# app
+from autoslugfield.settings import slugify
 
 class AutoSlugField(SlugField):
     """ A slug field which can automatically do the following two tasks on save:
@@ -51,7 +53,7 @@ class AutoSlugField(SlugField):
     def _get_unique_slug(self, model_instance, slug):
         model = model_instance.__class__
         field_name = self.name
-        index = 0
+        index = 1
         orig_slug = slug
         while True:
             try:
