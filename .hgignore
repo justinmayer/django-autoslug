@@ -1,0 +1,6 @@
+^\.directory
+egg-info
+^build/
+^dist/
+~$
+\.pyc$
