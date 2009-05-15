@@ -1,50 +1,69 @@
 # -*- coding: utf-8 -*-
-
-# Original snippet: http://djangosnippets.org/snippets/728/
-# Reworked by Andy Mikhailenko <neithere at gmail dot com> in Sep 2008
+#
+#  Copyright (c) 2008—2009 Andy Mikhailenko
+#
+#  This file is part of django-autoslug.
+#
+#  django-autoslug is free software under terms of the GNU Lesser
+#  General Public License version 3 (LGPLv3) as published by the Free
+#  Software Foundation. See the file README for copying conditions.
+#
 
 # django
 from django.db.models.fields import DateField, SlugField
 
 # app
-from autoslugfield.settings import slugify
+from autoslug.settings import slugify
 
 class AutoSlugField(SlugField):
-    """ A slug field which can automatically do the following two tasks on save:
-    - populate itself from another field (using 'populate_from'), and
-    - preserve uniqueness of the value (using 'unique' or 'unique_with_date').
+    """
+    AutoSlugField is a slug field that can automatically do the following on save:
+    - populate itself from another field (using 'populate_from'),
+    - use custom slugify() function (can be defined in settings), and
+    - preserve uniqueness of the value (using 'unique' or 'unique_with').
     
     None of the tasks is mandatory, i.e. you can have auto-populated non-unique fields,
     manually entered unique ones (absolutely unique or within a given date) or both.
 
-    If both unique_with and unique_with_date are declared,
+    Uniqueness is preserved by checking if the slug is unique with given constraints
+    (unique_with) or globally (unique) and adding a number to the slug to make
+    it unique. See examples below.
     
-    IMPORTANT NOTE: always declare attributes with AutoSlugField *after* attributes
-    from which you wish to 'populate_from' or check 'unique_with_date' because autosaved
-    dates and other such fields must be already processed before using them from here.
+    IMPORTANT: always declare attributes with AutoSlugField *after* attributes
+    from which you wish to 'populate_from' or check 'unique_with' because autosaved
+    dates and other such fields must be already processed before checking occurs.
     
     Usage examples:
-
-    # force unique=True, silently fix on conflict
+    
+    # slugify but allow non-unique slugs
     slug = AutoSlugField()
+
+    # globally unique, silently fix on conflict ("foo" --> "foo-1".."foo-n")
+    slug = AutoSlugField(unique=True)
     
     # autoslugify value from title attr; default editable to False
     slug = AutoSlugField(populate_from='title')
     
     # same as above but force editable=True
     slug = AutoSlugField(populate_from='title', editable=True)
+
+    # ensure that slug is unique with given date (not globally)
+    slug = AutoSlugField(unique_with='pub_date')
     
-    # force unique=False but ensure that slug is unique for given date
-    slug = AutoSlugField(unique_with=('pub_date',))
+    # ensure that slug is unique with given date AND category
+    slug = AutoSlugField(unique_with=('pub_date','category'))
     
     # mix above-mentioned behaviour bits
-    slug = AutoSlugField(unique_with=('pub_date',), populate_from='title')
+    slug = AutoSlugField(populate_from='title', unique_with='pub_date')
 
-    # ensure uniqueness for more than one field (intersection will be checked)
-    slug = AutoSlugField(unique_with=('pub_date','category'), populate_from='title')
+    Please don't forget to declare your slug attribute after the fields
+    referenced in `populate_from` and `unique_with`.
     """
     def __init__(self, *args, **kwargs):
         kwargs['max_length'] = kwargs.get('max_length', 50)
+
+        if kwargs['unique'] and kwargs['unique_with']:
+            #raise KeyError, 'AutoSlugField cannot
 
         # autopopulated slug is not editable unless told so
         self.populate_from = kwargs.pop('populate_from', None)
