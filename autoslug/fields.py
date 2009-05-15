@@ -62,9 +62,6 @@ class AutoSlugField(SlugField):
     def __init__(self, *args, **kwargs):
         kwargs['max_length'] = kwargs.get('max_length', 50)
 
-        if kwargs['unique'] and kwargs['unique_with']:
-            #raise KeyError, 'AutoSlugField cannot
-
         # autopopulated slug is not editable unless told so
         self.populate_from = kwargs.pop('populate_from', None)
         if self.populate_from:
