@@ -1,0 +1,5 @@
+README
+setup.py
+autoslug/__init__.py
+autoslug/fields.py
+autoslug/settings.py
