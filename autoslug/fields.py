@@ -79,9 +79,12 @@ class AutoSlugField(SlugField):
                  'use unique_with=("foo",) instead.', DeprecationWarning)
             self.unique_with += (kwargs['unique_with_date'],)
 
-        # force full uniqueness unless more granular is specified
-        if not self.unique_with:
-            kwargs.setdefault('unique', True)
+        if self.unique_with:
+            # we will do "manual" granular check below
+            kwargs['unique'] = False
+        else:
+            # force full uniqueness
+            kwargs['unique'] = True
 
         # Set db_index=True unless it's been set manually.
         if 'db_index' not in kwargs:
