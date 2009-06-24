@@ -12,7 +12,7 @@
 
 "django-autoslug setup"
 
-from distutils.core import setup
+from setuptools import setup
 from autoslug import __version__
 
 setup(
@@ -22,7 +22,7 @@ setup(
     
     requires = ['python (>= 2.4)', 'django (>= 1.0)'],
     # in case you want to use slugify() with support for transliteration:
-    extras_require = ['pytils (>= 0.2)'],
+    extras_require = {'cyrillic': 'pytils >= 0.2'},
     
     description  = 'An automated slug field for Django',
     long_description = "A slug field which can automatically a) populate itself "\
@@ -34,4 +34,14 @@ setup(
     download_url = 'http://bitbucket.org/neithere/django-autoslug/get/tip.zip',
     license      = 'GNU Lesser General Public License (LGPL), Version 3',
     keywords     = 'django field slug auto transliteration i18n',
+    classifiers  = [
+        'Development Status :: 5 - Production/Stable',
+        'Environment :: Web Environment',
+        'Framework :: Django',
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: GNU Library or Lesser General Public License (LGPL)',
+        'Programming Language :: Python',
+        'Topic :: Software Development :: Libraries :: Python Modules',
+        'Topic :: Text Processing :: General',
+    ],
 )
