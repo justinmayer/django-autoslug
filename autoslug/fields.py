@@ -21,38 +21,38 @@ class AutoSlugField(SlugField):
     - populate itself from another field (using 'populate_from'),
     - use custom slugify() function (can be defined in settings), and
     - preserve uniqueness of the value (using 'unique' or 'unique_with').
-    
+
     None of the tasks is mandatory, i.e. you can have auto-populated non-unique fields,
     manually entered unique ones (absolutely unique or within a given date) or both.
 
     Uniqueness is preserved by checking if the slug is unique with given constraints
     (unique_with) or globally (unique) and adding a number to the slug to make
     it unique. See examples below.
-    
+
     IMPORTANT: always declare attributes with AutoSlugField *after* attributes
     from which you wish to 'populate_from' or check 'unique_with' because autosaved
     dates and other such fields must be already processed before checking occurs.
-    
+
     Usage examples:
-    
+
     # slugify but allow non-unique slugs
     slug = AutoSlugField()
 
     # globally unique, silently fix on conflict ("foo" --> "foo-1".."foo-n")
     slug = AutoSlugField(unique=True)
-    
+
     # autoslugify value from title attr; default editable to False
     slug = AutoSlugField(populate_from='title')
-    
+
     # same as above but force editable=True
     slug = AutoSlugField(populate_from='title', editable=True)
 
     # ensure that slug is unique with given date (not globally)
     slug = AutoSlugField(unique_with='pub_date')
-    
+
     # ensure that slug is unique with given date AND category
     slug = AutoSlugField(unique_with=('pub_date','category'))
-    
+
     # mix above-mentioned behaviour bits
     slug = AutoSlugField(populate_from='title', unique_with='pub_date')
 
@@ -71,7 +71,7 @@ class AutoSlugField(SlugField):
         self.unique_with = kwargs.pop('unique_with', ())
         if isinstance(self.unique_with, basestring):
             self.unique_with = (self.unique_with,)
-        
+
         # backward compatibility
         if kwargs.get('unique_with_date'):
             from warnings import warn
@@ -94,7 +94,9 @@ class AutoSlugField(SlugField):
     def pre_save(self, instance, add):
         # get currently entered slug
         value = self.value_from_object(instance)
-        
+
+        slug = None
+
         # autopopulate (unless the field is editable and has some value)
         if value:
             slug = slugify(value)
