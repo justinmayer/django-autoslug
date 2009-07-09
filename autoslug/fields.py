@@ -18,9 +18,9 @@ from autoslug.settings import slugify
 class AutoSlugField(SlugField):
     """
     AutoSlugField is a slug field that can automatically do the following on save:
-    - populate itself from another field (using 'populate_from'),
+    - populate itself from another field (using `populate_from`),
     - use custom slugify() function (can be defined in settings), and
-    - preserve uniqueness of the value (using 'unique' or 'unique_with').
+    - preserve uniqueness of the value (using `unique` or `unique_with`).
 
     None of the tasks is mandatory, i.e. you can have auto-populated non-unique fields,
     manually entered unique ones (absolutely unique or within a given date) or both.
@@ -29,32 +29,36 @@ class AutoSlugField(SlugField):
     (unique_with) or globally (unique) and adding a number to the slug to make
     it unique. See examples below.
 
-    IMPORTANT: always declare attributes with AutoSlugField *after* attributes
-    from which you wish to 'populate_from' or check 'unique_with' because autosaved
-    dates and other such fields must be already processed before checking occurs.
+    .. warning:: always declare attributes with AutoSlugField *after* attributes
+        from which you wish to 'populate_from' or check 'unique_with' because
+        autosaved ates and other such fields must be already processed before
+        the checking occurs.
 
-    Usage examples:
+    Usage examples::
 
-    # slugify but allow non-unique slugs
-    slug = AutoSlugField()
+        # slugify but allow non-unique slugs
+        slug = AutoSlugField()
 
-    # globally unique, silently fix on conflict ("foo" --> "foo-1".."foo-n")
-    slug = AutoSlugField(unique=True)
+        # globally unique, silently fix on conflict ("foo" --> "foo-1".."foo-n")
+        slug = AutoSlugField(unique=True)
 
-    # autoslugify value from title attr; default editable to False
-    slug = AutoSlugField(populate_from='title')
+        # autoslugify value from title attr; default editable to False
+        slug = AutoSlugField(populate_from='title')
 
-    # same as above but force editable=True
-    slug = AutoSlugField(populate_from='title', editable=True)
+        # same as above but force editable=True
+        slug = AutoSlugField(populate_from='title', editable=True)
 
-    # ensure that slug is unique with given date (not globally)
-    slug = AutoSlugField(unique_with='pub_date')
+        # ensure that slug is unique with given date (not globally)
+        slug = AutoSlugField(unique_with='pub_date')
 
-    # ensure that slug is unique with given date AND category
-    slug = AutoSlugField(unique_with=('pub_date','category'))
+        # ensure that slug is unique with given date AND category
+        slug = AutoSlugField(unique_with=('pub_date','category'))
 
-    # mix above-mentioned behaviour bits
-    slug = AutoSlugField(populate_from='title', unique_with='pub_date')
+        # mix above-mentioned behaviour bits
+        slug = AutoSlugField(populate_from='title', unique_with='pub_date')
+
+        # minimum date granularity is shifted from day to month
+        slug = AutoSlugField(populate_from='title', unique_with='pub_date__month')
 
     Please don't forget to declare your slug attribute after the fields
     referenced in `populate_from` and `unique_with`.
@@ -123,14 +127,22 @@ class AutoSlugField(SlugField):
     def _generate_unique_slug(self, instance, slug):
         """
         Generates unique slug by adding a number to given value until no model
-        is found with such slug. If unique_with (a tuple of field names) was
+        is found with such slug. If ``unique_with`` (a tuple of field names) was
         specified for the field, all these fields are included together
         in the query when looking for a "rival" model instance.
         """
         def _get_lookups(instance):
             "Returns a dict'able tuple of lookups to ensure slug uniqueness"
-            for field_name in self.unique_with:
+            for _field_name in self.unique_with:
+                field_name, inner = _field_name, None
+
                 field = instance._meta.get_field(field_name)
+
+                # `inner` is the 'month' part in 'pub_date__month'.
+                # it *only* applies to dates, otherwise it's just ignored.
+                if '__' in field:
+                    field_name, inner = field.split('__')
+
                 value = getattr(instance, field_name)
                 if not value:
                     raise ValueError, 'Could not check uniqueness of %s.%s with'\
@@ -141,9 +153,17 @@ class AutoSlugField(SlugField):
                            instance._meta.object_name, field_name,
                            self.name, '", "'.join(self.unique_with))
                 if isinstance(field, DateField):    # DateTimeField is a DateField subclass
-                    for part in 'year', 'month', 'day':
-                        lookup = '%s__%s' % (field_name, part)
-                        yield (lookup, getattr(value, part))
+                    inner = inner or 'day'
+                    parts = 'year', 'month', 'day'
+                    try:
+                        granularity = parts.index(inner) + 1
+                    except ValueError:
+                        raise ValueError('expected one of %s, got "%s" in "%s"'
+                                         % (parts, inner, _field_name))
+                    else:
+                        for part in parts[:granularity]:
+                            lookup = '%s__%s' % (field_name, part)
+                            yield (lookup, getattr(value, part))
                 else:
                     yield (field_name, value)
         lookups = tuple(_get_lookups(instance))
