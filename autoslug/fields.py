@@ -9,32 +9,67 @@
 #  Software Foundation. See the file README for copying conditions.
 #
 
+# python
+from warnings import warn
+
 # django
-from django.db.models.fields import DateField, SlugField
+from django.db.models.fields import FieldDoesNotExist, DateField, SlugField
 
 # app
 from autoslug.settings import slugify
 
 class AutoSlugField(SlugField):
     """
-    AutoSlugField is a slug field that can automatically do the following on save:
+    AutoSlugField is an extended SlugField able to automatically resolve name
+    clashes.
+
+    AutoSlugField can also perform the following tasks on save:
+
     - populate itself from another field (using `populate_from`),
-    - use custom slugify() function (can be defined in settings), and
+    - use custom `slugify` function (can be defined in :doc:`settings`), and
     - preserve uniqueness of the value (using `unique` or `unique_with`).
 
     None of the tasks is mandatory, i.e. you can have auto-populated non-unique fields,
     manually entered unique ones (absolutely unique or within a given date) or both.
 
     Uniqueness is preserved by checking if the slug is unique with given constraints
-    (unique_with) or globally (unique) and adding a number to the slug to make
-    it unique. See examples below.
+    (`unique_with`) or globally (`unique`) and adding a number to the slug to make
+    it unique.
 
-    .. warning:: always declare attributes with AutoSlugField *after* attributes
-        from which you wish to 'populate_from' or check 'unique_with' because
-        autosaved ates and other such fields must be already processed before
-        the checking occurs.
+    :param populate_from: string: name of attribute from which to fill the slug.
+    :param unique: boolean: ensure total slug uniqueness (unless more precise `unique_with`
+        is defined).
+    :param unique_with: string or tuple of strings: name or names of attributes
+        to check for "partial uniqueness", i.e. there will not be two objects
+        with identical slugs if these objects share the same values of given
+        attributes. For instance, ``unique_with='pub_date'`` tells AutoSlugField
+        to enforce slug uniqueness of all items published on given date. The
+        slug, however, may reappear on another date. If more than one field is
+        given, e.g. ``unique_with=('pub_date', 'author')``, then the same slug may
+        reappear within a day or within some author's articles but never within
+        a day for the same author.
 
-    Usage examples::
+    .. note:: always place any slug attribute *after* attributes referenced
+        by it (i.e. those from which you wish to `populate_from` or check
+        `unique_with`). The reasoning is that autosaved dates and other such
+        fields must be already processed before using them in the AutoSlugField.
+
+    Example usage::
+
+        from django.db import models
+        from autoslug.fields import AutoSlugField
+
+        class Article(models.Model):
+            '''An article with title, date and slug. The slug is not totally
+            unique but there will be no two articles with the same slug within
+            any month.
+            '''
+            title = models.CharField(max_length=200)
+            pub_date = models.DateField(auto_now_add=True)
+            slug = AutoSlugField(populate_from='title', unique_with='pub_date__month')
+
+
+    More options::
 
         # slugify but allow non-unique slugs
         slug = AutoSlugField()
@@ -59,9 +94,6 @@ class AutoSlugField(SlugField):
 
         # minimum date granularity is shifted from day to month
         slug = AutoSlugField(populate_from='title', unique_with='pub_date__month')
-
-    Please don't forget to declare your slug attribute after the fields
-    referenced in `populate_from` and `unique_with`.
     """
     def __init__(self, *args, **kwargs):
         kwargs['max_length'] = kwargs.get('max_length', 50)
@@ -78,7 +110,6 @@ class AutoSlugField(SlugField):
 
         # backward compatibility
         if kwargs.get('unique_with_date'):
-            from warnings import warn
             warn('Using unique_with_date="foo" in AutoSlugField is deprecated, '\
                  'use unique_with=("foo",) instead.', DeprecationWarning)
             self.unique_with += (kwargs['unique_with_date'],)
@@ -106,6 +137,9 @@ class AutoSlugField(SlugField):
             slug = slugify(value)
         elif self.populate_from: # and not self.editable:
             slug = slugify(getattr(instance, self.populate_from))
+            if __debug__ and not slug:
+                print 'Failed to populate slug %s.%s from an empty field %s' % \
+                    (instance._meta.object_name, self.name, self.populate_from)
 
         if not slug:
             # no incoming value,  use model name
@@ -134,24 +168,38 @@ class AutoSlugField(SlugField):
         def _get_lookups(instance):
             "Returns a dict'able tuple of lookups to ensure slug uniqueness"
             for _field_name in self.unique_with:
-                field_name, inner = _field_name, None
-
-                field = instance._meta.get_field(field_name)
-
                 # `inner` is the 'month' part in 'pub_date__month'.
                 # it *only* applies to dates, otherwise it's just ignored.
-                if '__' in field:
-                    field_name, inner = field.split('__')
+                if '__' in _field_name:
+                    if _field_name.count('__') > 1:
+                        raise ValueError('The `unique_with` constraint in %s.%s'
+                                         ' is set to "%s", but AutoSlugField only'
+                                         ' accepts one level of nesting for dates'
+                                         ' (e.g. "date__month").'
+                                         % (instance._meta.object_name, self.name,
+                                            _field_name))
+                    field_name, inner = _field_name.split('__')
+                else:
+                    field_name, inner = _field_name, None
+
+                try:
+                    field = instance._meta.get_field(field_name)
+                except FieldDoesNotExist:
+                    raise ValueError('Could not find attribute %s.%s referenced'
+                                     ' by %s.%s (see constraint `unique_with`)'
+                                     % (instance._meta.object_name, field_name,
+                                        instance._meta.object_name, self.name))
 
                 value = getattr(instance, field_name)
                 if not value:
-                    raise ValueError, 'Could not check uniqueness of %s.%s with'\
-                        ' respect to %s.%s because the latter is empty. Please'\
-                        ' ensure that "%s" is declared *after* all fields it'\
-                        ' depends on (i.e. "%s"), and that they are not blank.'\
-                        % (instance._meta.object_name, self.name,
-                           instance._meta.object_name, field_name,
-                           self.name, '", "'.join(self.unique_with))
+                    raise ValueError('Could not check uniqueness of %s.%s with'
+                                     ' respect to %s.%s because the latter is empty.'
+                                     ' Please ensure that "%s" is declared *after*'
+                                     ' all fields it depends on (i.e. "%s"), and'
+                                     ' that they are not blank.'
+                                     % (instance._meta.object_name, self.name,
+                                        instance._meta.object_name, field_name,
+                                        self.name, '", "'.join(self.unique_with)))
                 if isinstance(field, DateField):    # DateTimeField is a DateField subclass
                     inner = inner or 'day'
                     parts = 'year', 'month', 'day'
@@ -165,6 +213,13 @@ class AutoSlugField(SlugField):
                             lookup = '%s__%s' % (field_name, part)
                             yield (lookup, getattr(value, part))
                 else:
+                    if inner:
+                        raise ValueError('Wrong value "%s__%s" for constraint'
+                                         ' `unique_with` in %s.%s. Compound field'
+                                         ' names are only accepted for DateField'
+                                         ' attributes (such as "date__month").'
+                                         % (field_name, inner,
+                                            instance._meta.object_name, self.name))
                     yield (field_name, value)
         lookups = tuple(_get_lookups(instance))
         model = instance.__class__

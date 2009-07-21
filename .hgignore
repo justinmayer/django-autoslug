@@ -1,7 +1,7 @@
 ^\.directory
 egg-info
-^build/
-^dist/
+^(doc/)?_?build/
+^_?dist/
 ^temp/
 ~$
 \.pyc$

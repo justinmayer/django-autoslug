@@ -11,12 +11,25 @@
 
 from django.conf import settings
 
-""" the AUTOSLUG_SLUGIFY_FUNCTION setting allows to define
-a custom slugifying function. Value can be a string or a callable.
-Default value is 'django.template.defaultfilters.slugify'.
+__doc__ = """Available settings for django-autoslug:
+
+* `AUTOSLUG_SLUGIFY_FUNCTION` allows to define a custom slugifying function.
+
+  The function can be repsesented as string or callable, e.g.::
+
+      # custom function, path as string:
+      AUTOSLUG_SLUGIFY_FUNCTION = 'some_app.slugify_func'
+
+      # custom function, callable:
+      AUTOSLUG_SLUGIFY_FUNCTION = some_app.slugify_func
+
+      # custom function, defined inline:
+      AUTOSLUG_SLUGIFY_FUNCTION = lambda slug: 'can i haz %s?' % slug
+
+  Default value is 'django.template.defaultfilters.slugify'.
 """
 
-# use custom slugifying function if any 
+# use custom slugifying function if any
 slugify = getattr(settings, 'AUTOSLUG_SLUGIFY_FUNCTION', None)
 
 if not slugify:
