@@ -117,9 +117,6 @@ class AutoSlugField(SlugField):
         if self.unique_with:
             # we will do "manual" granular check below
             kwargs['unique'] = False
-        else:
-            # force full uniqueness
-            kwargs['unique'] = True
 
         # Set db_index=True unless it's been set manually.
         if 'db_index' not in kwargs:
