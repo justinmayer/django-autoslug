@@ -18,6 +18,9 @@ from django.db.models.fields import FieldDoesNotExist, DateField, SlugField
 # app
 from autoslug.settings import slugify
 
+
+SLUG_INDEX_SEPARATOR = '-'    # the "-" in "foo-2"
+
 class AutoSlugField(SlugField):
     """
     AutoSlugField is an extended SlugField able to automatically resolve name
@@ -222,7 +225,10 @@ class AutoSlugField(SlugField):
         model = instance.__class__
         field_name = self.name
         index = 1
+        if self.max_length < len(slug):
+            slug = slug[:self.max_length]
         orig_slug = slug
+        sep = SLUG_INDEX_SEPARATOR
         # keep changing the slug until it is unique
         while True:
             try:
@@ -233,7 +239,13 @@ class AutoSlugField(SlugField):
                     raise model.DoesNotExist
                 # the slug is not unique; change once more
                 index += 1
-                slug = '%s-%d' % (orig_slug, index)
+                # ensure the resulting string is not too long
+                tail_length = len(sep) + len(str(index))
+                combined_length = len(orig_slug) + tail_length
+                if self.max_length < combined_length:
+                    orig_slug = orig_slug[:self.max_length - tail_length]
+                # re-generate the slug
+                slug = '%s%s%d' % (orig_slug, sep, index)
             except model.DoesNotExist:
                 # slug is unique, no model uses it
                 return slug
