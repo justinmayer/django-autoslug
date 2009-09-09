@@ -235,7 +235,7 @@ class AutoSlugField(SlugField):
                 # raise model.DoesNotExist if current slug is unique
                 rival = model.objects.get(**dict(lookups + ((self.name, slug),) ))
                 # not unique, but maybe the "rival" is the instance itself?
-                if rival.id == instance.id:
+                if rival == instance:
                     raise model.DoesNotExist
                 # the slug is not unique; change once more
                 index += 1

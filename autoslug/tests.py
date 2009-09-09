@@ -18,6 +18,11 @@ class Foo(Model):
     name = CharField(max_length=200)
     slug = AutoSlugField(populate_from='name', unique=True)
 
+class ModelWithCustomPrimaryKey(Model):
+    custom_primary_key = CharField(primary_key=True, max_length=1)
+    name = CharField(max_length=200)
+    slug = AutoSlugField(populate_from='name', unique=True)
+
 __doc__ = """
 >>> long_name = 'x' * 250
 >>> foo = Foo(name=long_name)
@@ -28,4 +33,9 @@ __doc__ = """
 >>> bar.save()
 >>> [len(x.slug) for x in Foo.objects.all()]
 [50, 50]
+
+# Models with custom primary keys should work
+>>> first_model_instance = ModelWithCustomPrimaryKey.objects.create(custom_primary_key='a', name='name used in slug')
+>>> second_model_instance = ModelWithCustomPrimaryKey.objects.create(custom_primary_key='b', name='name used in slug')
+
 """
