@@ -5,3 +5,10 @@ egg-info
 ^temp/
 ~$
 \.pyc$
+
+
+#eclipse files
+syntax: glob
+.project
+.pydevproject
+.settings
