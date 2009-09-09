@@ -39,9 +39,9 @@ class AutoSlugField(SlugField):
     (`unique_with`) or globally (`unique`) and adding a number to the slug to make
     it unique.
 
-    :param populate_from: string or callable: if string is given it is considered as 
-        a name of attribute from which to fill the slug. If callable is given it should 
-        accept `instance` parameter and return a value to fill the slug with.
+    :param populate_from: string or callable: if string is given, it is considered
+        as the name of attribute from which to fill the slug. If callable is given,
+        it should accept `instance` parameter and return a value to fill the slug with.
     :param unique: boolean: ensure total slug uniqueness (unless more precise `unique_with`
         is defined).
     :param unique_with: string or tuple of strings: name or names of attributes
@@ -82,7 +82,7 @@ class AutoSlugField(SlugField):
         # globally unique, silently fix on conflict ("foo" --> "foo-1".."foo-n")
         slug = AutoSlugField(unique=True)
 
-        # autoslugify value from title attr; default editable to False
+        # autoslugify value from attribute named "title"; editable defaults to False
         slug = AutoSlugField(populate_from='title')
 
         # same as above but force editable=True
@@ -100,8 +100,8 @@ class AutoSlugField(SlugField):
         # minimum date granularity is shifted from day to month
         slug = AutoSlugField(populate_from='title', unique_with='pub_date__month')
 
-        # autoslugify value from models's user name using callable 
-        # ex. usage: user profile models
+        # autoslugify value from a dynamic attribute using callable
+        # (ex. usage: user profile models)
         slug = AutoSlugField(populate_from=lambda instance: instance.user.get_full_name())
     """
     def __init__(self, *args, **kwargs):
@@ -136,19 +136,15 @@ class AutoSlugField(SlugField):
         # get currently entered slug
         value = self.value_from_object(instance)
 
-        slug = None
-
         # autopopulate (unless the field is editable and has some value)
-        if value:
-            slug = slugify(value)
-        elif self.populate_from: # and not self.editable:
-            if callable(self.populate_from):
-                slug = slugify(self.populate_from(instance))
-            else:
-                slug = slugify(getattr(instance, self.populate_from))
-            if __debug__ and not slug:
-                print 'Failed to populate slug %s.%s from an empty field %s' % \
+        if self.populate_from and not value: # and not self.editable:
+            value = self._get_prepopulated_value(instance)
+
+            if __debug__ and not value:
+                print 'Failed to populate slug %s.%s from %s' % \
                     (instance._meta.object_name, self.name, self.populate_from)
+
+        slug = slugify(value)
 
         if not slug:
             # no incoming value,  use model name
@@ -166,6 +162,16 @@ class AutoSlugField(SlugField):
 
         return slug
         #return super(AutoSlugField, self).pre_save(instance, add)
+
+    def _get_prepopulated_value(self, instance):
+        """Returns preliminary value based on `populate_from`."""
+        if callable(self.populate_from):
+            # AutoSlugField(populate_from=lambda instance: ...)
+            return self.populate_from(instance)
+        else:
+            # AutoSlugField(populate_from='foo')
+            attr = getattr(instance, self.populate_from)
+            return callable(attr) and attr() or attr
 
     def _generate_unique_slug(self, instance, slug):
         """
@@ -244,7 +250,7 @@ class AutoSlugField(SlugField):
                 # raise model.DoesNotExist if current slug is unique
                 rival = model.objects.get(**dict(lookups + ((self.name, slug),) ))
                 # not unique, but maybe the "rival" is the instance itself?
-                if rival.id == instance.id:
+                if rival == instance:
                     raise model.DoesNotExist
                 # the slug is not unique; change once more
                 index += 1
