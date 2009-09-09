@@ -100,7 +100,10 @@ class AutoSlugField(SlugField):
         # minimum date granularity is shifted from day to month
         slug = AutoSlugField(populate_from='title', unique_with='pub_date__month')
 
-        # autoslugify value from a dynamic attribute using callable
+        # autoslugify value from a dynamic attribute (i.e. a method)
+        slug = AutoSlugField(populate_from='get_full_name')
+
+        # autoslugify value from a custom callable
         # (ex. usage: user profile models)
         slug = AutoSlugField(populate_from=lambda instance: instance.user.get_full_name())
     """
