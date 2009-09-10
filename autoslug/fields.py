@@ -21,6 +21,7 @@ from autoslug.settings import slugify
 
 SLUG_INDEX_SEPARATOR = '-'    # the "-" in "foo-2"
 
+
 class AutoSlugField(SlugField):
     """
     AutoSlugField is an extended SlugField able to automatically resolve name
@@ -161,10 +162,10 @@ class AutoSlugField(SlugField):
 
         assert slug, 'value is filled before saving'
 
-        setattr(instance, self.name, slug) # XXX do we need this?
+        # make the updated slug available as instance attribute
+        setattr(instance, self.name, slug)
 
         return slug
-        #return super(AutoSlugField, self).pre_save(instance, add)
 
     def _get_prepopulated_value(self, instance):
         """Returns preliminary value based on `populate_from`."""
@@ -179,8 +180,8 @@ class AutoSlugField(SlugField):
     def _generate_unique_slug(self, instance, slug):
         """
         Generates unique slug by adding a number to given value until no model
-        is found with such slug. If ``unique_with`` (a tuple of field names) was
-        specified for the field, all these fields are included together
+        instance can be found with such slug. If ``unique_with`` (a tuple of field
+        names) was specified for the field, all these fields are included together
         in the query when looking for a "rival" model instance.
         """
         def _get_lookups(instance):
@@ -220,7 +221,7 @@ class AutoSlugField(SlugField):
                                         self.name, '", "'.join(self.unique_with)))
                 if isinstance(field, DateField):    # DateTimeField is a DateField subclass
                     inner = inner or 'day'
-                    parts = 'year', 'month', 'day'
+                    parts = ['year', 'month', 'day']
                     try:
                         granularity = parts.index(inner) + 1
                     except ValueError:
