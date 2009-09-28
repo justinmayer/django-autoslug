@@ -11,8 +11,9 @@
 
 # TODO: test cases for dates and unique_with
 
+from django.test import TestCase
 
-from django.db.models import Model, CharField
+from django.db.models import Model, CharField, ForeignKey
 from autoslug.fields import AutoSlugField
 
 
@@ -41,6 +42,30 @@ class ModelWithUniqueSlug(Model):
     """
     name = CharField(max_length=200)
     slug = AutoSlugField(populate_from='name', unique=True)
+    
+
+class ModelWithUniqueSlugFK(Model):    
+    """
+    >>> sm1 = SimpleModel.objects.create(name='test')
+    >>> sm2 = SimpleModel.objects.create(name='test')
+    >>> sm3 = SimpleModel.objects.create(name='test2')    
+    >>> greeting = 'Hello world!'
+    >>> a = ModelWithUniqueSlugFK.objects.create(name=greeting, simple_model=sm1)
+    >>> a.slug
+    'hello-world'
+    >>> b = ModelWithUniqueSlugFK.objects.create(name=greeting, simple_model=sm2)
+    >>> b.slug
+    'hello-world-2'
+    >>> c = ModelWithUniqueSlugFK.objects.create(name=greeting, simple_model=sm3)
+    >>> c.slug
+    'hello-world'
+    >>> d = ModelWithUniqueSlugFK.objects.create(name=greeting, simple_model=sm1)
+    >>> d.slug
+    'hello-world-3'
+    """    
+    name = CharField(max_length=200)
+    simple_model = ForeignKey(SimpleModel)
+    slug = AutoSlugField(populate_from='name', unique_with='simple_model__name')
 
 
 class ModelWithLongName(Model):

@@ -184,20 +184,13 @@ class AutoSlugField(SlugField):
         names) was specified for the field, all these fields are included together
         in the query when looking for a "rival" model instance.
         """
-        def _get_lookups(instance):
+        base_instance = instance
+        
+        def _get_lookups(instance, unique_with):
             "Returns a dict'able tuple of lookups to ensure slug uniqueness"
-            for _field_name in self.unique_with:
-                # `inner` is the 'month' part in 'pub_date__month'.
-                # it *only* applies to dates, otherwise it's just ignored.
+            for _field_name in unique_with:
                 if '__' in _field_name:
-                    if _field_name.count('__') > 1:
-                        raise ValueError('The `unique_with` constraint in %s.%s'
-                                         ' is set to "%s", but AutoSlugField only'
-                                         ' accepts one level of nesting for dates'
-                                         ' (e.g. "date__month").'
-                                         % (instance._meta.object_name, self.name,
-                                            _field_name))
-                    field_name, inner = _field_name.split('__')
+                    field_name, inner = _field_name.split('__', 1)
                 else:
                     field_name, inner = _field_name, None
 
@@ -207,7 +200,7 @@ class AutoSlugField(SlugField):
                     raise ValueError('Could not find attribute %s.%s referenced'
                                      ' by %s.%s (see constraint `unique_with`)'
                                      % (instance._meta.object_name, field_name,
-                                        instance._meta.object_name, self.name))
+                                        base_instance._meta.object_name, self.name))
 
                 value = getattr(instance, field_name)
                 if not value:
@@ -216,11 +209,20 @@ class AutoSlugField(SlugField):
                                      ' Please ensure that "%s" is declared *after*'
                                      ' all fields it depends on (i.e. "%s"), and'
                                      ' that they are not blank.'
-                                     % (instance._meta.object_name, self.name,
+                                     % (base_instance._meta.object_name, self.name,
                                         instance._meta.object_name, field_name,
                                         self.name, '", "'.join(self.unique_with)))
-                if isinstance(field, DateField):    # DateTimeField is a DateField subclass
+                if isinstance(field, DateField):    # DateTimeField is a DateField subclass                    
                     inner = inner or 'day'
+                    
+                    if '__' in inner:
+                        raise ValueError('The `unique_with` constraint in %s.%s'
+                                         ' is set to "%s", but AutoSlugField only'
+                                         ' accepts one level of nesting for dates'
+                                         ' (e.g. "date__month").'
+                                         % (base_instance._meta.object_name, self.name,
+                                            _field_name))                    
+                        
                     parts = ['year', 'month', 'day']
                     try:
                         granularity = parts.index(inner) + 1
@@ -233,14 +235,12 @@ class AutoSlugField(SlugField):
                             yield (lookup, getattr(value, part))
                 else:
                     if inner:
-                        raise ValueError('Wrong value "%s__%s" for constraint'
-                                         ' `unique_with` in %s.%s. Compound field'
-                                         ' names are only accepted for DateField'
-                                         ' attributes (such as "date__month").'
-                                         % (field_name, inner,
-                                            instance._meta.object_name, self.name))
-                    yield (field_name, value)
-        lookups = tuple(_get_lookups(instance))
+                        for res in _get_lookups(value, [inner]):
+                            yield (_field_name, res[1],)
+                    else:
+                        yield (field_name, value)
+                    
+        lookups = tuple(_get_lookups(instance, self.unique_with))
         model = instance.__class__
         field_name = self.name
         index = 1
