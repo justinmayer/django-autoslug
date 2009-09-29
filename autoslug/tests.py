@@ -9,11 +9,13 @@
 #  Software Foundation. See the file README for copying conditions.
 #
 
-# TODO: test cases for dates and unique_with
+# python
+import datetime
 
-from django.test import TestCase
+# django
+from django.db.models import Model, CharField, DateField, ForeignKey
 
-from django.db.models import Model, CharField, ForeignKey
+# this app
 from autoslug.fields import AutoSlugField
 
 
@@ -42,13 +44,13 @@ class ModelWithUniqueSlug(Model):
     """
     name = CharField(max_length=200)
     slug = AutoSlugField(populate_from='name', unique=True)
-    
 
-class ModelWithUniqueSlugFK(Model):    
+
+class ModelWithUniqueSlugFK(Model):
     """
     >>> sm1 = SimpleModel.objects.create(name='test')
     >>> sm2 = SimpleModel.objects.create(name='test')
-    >>> sm3 = SimpleModel.objects.create(name='test2')    
+    >>> sm3 = SimpleModel.objects.create(name='test2')
     >>> greeting = 'Hello world!'
     >>> a = ModelWithUniqueSlugFK.objects.create(name=greeting, simple_model=sm1)
     >>> a.slug
@@ -62,10 +64,82 @@ class ModelWithUniqueSlugFK(Model):
     >>> d = ModelWithUniqueSlugFK.objects.create(name=greeting, simple_model=sm1)
     >>> d.slug
     'hello-world-3'
-    """    
+    """
     name = CharField(max_length=200)
     simple_model = ForeignKey(SimpleModel)
     slug = AutoSlugField(populate_from='name', unique_with='simple_model__name')
+
+
+class ModelWithUniqueSlugDate(Model):
+    """
+    >>> a = ModelWithUniqueSlugDate(slug='test', date=datetime.date(2009,9,9))
+    >>> b = ModelWithUniqueSlugDate(slug='test', date=datetime.date(2009,9,9))
+    >>> c = ModelWithUniqueSlugDate(slug='test', date=datetime.date(2009,9,10))
+    >>> for m in a,b,c:
+    ...     m.save()
+    >>> a.slug
+    'test'
+    >>> b.slug
+    'test-2'
+    >>> c.slug
+    'test'
+    """
+    date = DateField()
+    slug = AutoSlugField(unique_with='date')
+
+
+class ModelWithUniqueSlugDay(Model):    # same as ...Date, just more explicit
+    """
+    >>> a = ModelWithUniqueSlugDay(slug='test', date=datetime.date(2009, 9,  9))
+    >>> b = ModelWithUniqueSlugDay(slug='test', date=datetime.date(2009, 9,  9))
+    >>> c = ModelWithUniqueSlugDay(slug='test', date=datetime.date(2009, 9, 10))
+    >>> for m in a,b,c:
+    ...     m.save()
+    >>> a.slug
+    'test'
+    >>> b.slug
+    'test-2'
+    >>> c.slug
+    'test'
+    """
+    date = DateField()
+    slug = AutoSlugField(unique_with='date__day')
+
+
+class ModelWithUniqueSlugMonth(Model):
+    """
+    >>> a = ModelWithUniqueSlugMonth(slug='test', date=datetime.date(2009, 9,  9))
+    >>> b = ModelWithUniqueSlugMonth(slug='test', date=datetime.date(2009, 9, 10))
+    >>> c = ModelWithUniqueSlugMonth(slug='test', date=datetime.date(2009, 10, 9))
+    >>> for m in a,b,c:
+    ...     m.save()
+    >>> a.slug
+    'test'
+    >>> b.slug
+    'test-2'
+    >>> c.slug
+    'test'
+    """
+    date = DateField()
+    slug = AutoSlugField(unique_with='date__month')
+
+
+class ModelWithUniqueSlugYear(Model):
+    """
+    >>> a = ModelWithUniqueSlugYear(slug='test', date=datetime.date(2009, 9,  9))
+    >>> b = ModelWithUniqueSlugYear(slug='test', date=datetime.date(2009, 10, 9))
+    >>> c = ModelWithUniqueSlugYear(slug='test', date=datetime.date(2010, 9,  9))
+    >>> for m in a,b,c:
+    ...     m.save()
+    >>> a.slug
+    'test'
+    >>> b.slug
+    'test-2'
+    >>> c.slug
+    'test'
+    """
+    date = DateField()
+    slug = AutoSlugField(unique_with='date__year')
 
 
 class ModelWithLongName(Model):

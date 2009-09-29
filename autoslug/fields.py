@@ -33,8 +33,9 @@ class AutoSlugField(SlugField):
     - use custom `slugify` function (can be defined in :doc:`settings`), and
     - preserve uniqueness of the value (using `unique` or `unique_with`).
 
-    None of the tasks is mandatory, i.e. you can have auto-populated non-unique fields,
-    manually entered unique ones (absolutely unique or within a given date) or both.
+    None of the tasks is mandatory, i.e. you can have auto-populated non-unique
+    fields, manually entered unique ones (absolutely unique or within a given
+    date) or both.
 
     Uniqueness is preserved by checking if the slug is unique with given constraints
     (`unique_with`) or globally (`unique`) and adding a number to the slug to make
@@ -42,9 +43,10 @@ class AutoSlugField(SlugField):
 
     :param populate_from: string or callable: if string is given, it is considered
         as the name of attribute from which to fill the slug. If callable is given,
-        it should accept `instance` parameter and return a value to fill the slug with.
-    :param unique: boolean: ensure total slug uniqueness (unless more precise `unique_with`
-        is defined).
+        it should accept `instance` parameter and return a value to fill the slug
+        with.
+    :param unique: boolean: ensure total slug uniqueness (unless more precise
+        `unique_with` is defined).
     :param unique_with: string or tuple of strings: name or names of attributes
         to check for "partial uniqueness", i.e. there will not be two objects
         with identical slugs if these objects share the same values of given
@@ -53,7 +55,8 @@ class AutoSlugField(SlugField):
         slug, however, may reappear on another date. If more than one field is
         given, e.g. ``unique_with=('pub_date', 'author')``, then the same slug may
         reappear within a day or within some author's articles but never within
-        a day for the same author.
+        a day for the same author. Foreign keys are also supported, i.e. not only
+        `unique_with='author'` will do, but also `unique_with='author__name'`.
 
     .. note:: always place any slug attribute *after* attributes referenced
         by it (i.e. those from which you wish to `populate_from` or check
@@ -94,6 +97,14 @@ class AutoSlugField(SlugField):
 
         # ensure that slug is unique with given date AND category
         slug = AutoSlugField(unique_with=('pub_date','category'))
+
+        # ensure that slug in unique with an external object
+        # assuming that author=ForeignKey(Author)
+        slug = AutoSlugField(unique_with='author')
+
+        # ensure that slug in unique with a subset of external objects (by lookups)
+        # assuming that author=ForeignKey(Author)
+        slug = AutoSlugField(unique_with='author__name')
 
         # mix above-mentioned behaviour bits
         slug = AutoSlugField(populate_from='title', unique_with='pub_date')
@@ -185,7 +196,7 @@ class AutoSlugField(SlugField):
         in the query when looking for a "rival" model instance.
         """
         base_instance = instance
-        
+
         def _get_lookups(instance, unique_with):
             "Returns a dict'able tuple of lookups to ensure slug uniqueness"
             for _field_name in unique_with:
@@ -193,6 +204,12 @@ class AutoSlugField(SlugField):
                     field_name, inner = _field_name.split('__', 1)
                 else:
                     field_name, inner = _field_name, None
+
+                if not hasattr(instance, '_meta'):
+                    raise ValueError('Could not resolve lookup "...%s" in %s.%s'
+                                     ' `unique_with`.'
+                                     % (_field_name, base_instance._meta.object_name,
+                                        self.name))
 
                 try:
                     field = instance._meta.get_field(field_name)
@@ -212,17 +229,17 @@ class AutoSlugField(SlugField):
                                      % (base_instance._meta.object_name, self.name,
                                         instance._meta.object_name, field_name,
                                         self.name, '", "'.join(self.unique_with)))
-                if isinstance(field, DateField):    # DateTimeField is a DateField subclass                    
+                if isinstance(field, DateField):    # DateTimeField is a DateField subclass
                     inner = inner or 'day'
-                    
+
                     if '__' in inner:
                         raise ValueError('The `unique_with` constraint in %s.%s'
                                          ' is set to "%s", but AutoSlugField only'
                                          ' accepts one level of nesting for dates'
                                          ' (e.g. "date__month").'
                                          % (base_instance._meta.object_name, self.name,
-                                            _field_name))                    
-                        
+                                            _field_name))
+
                     parts = ['year', 'month', 'day']
                     try:
                         granularity = parts.index(inner) + 1
@@ -232,14 +249,14 @@ class AutoSlugField(SlugField):
                     else:
                         for part in parts[:granularity]:
                             lookup = '%s__%s' % (field_name, part)
-                            yield (lookup, getattr(value, part))
+                            yield lookup, getattr(value, part)
                 else:
                     if inner:
                         for res in _get_lookups(value, [inner]):
-                            yield (_field_name, res[1],)
+                            yield _field_name, res[1]
                     else:
-                        yield (field_name, value)
-                    
+                        yield field_name, value
+
         lookups = tuple(_get_lookups(instance, self.unique_with))
         model = instance.__class__
         field_name = self.name
