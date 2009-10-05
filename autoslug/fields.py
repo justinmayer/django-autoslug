@@ -30,7 +30,7 @@ class AutoSlugField(SlugField):
     AutoSlugField can also perform the following tasks on save:
 
     - populate itself from another field (using `populate_from`),
-    - use custom `slugify` function (can be defined in :doc:`settings`), and
+    - use custom `slugify` function (using `slugify` or :doc:`settings`), and
     - preserve uniqueness of the value (using `unique` or `unique_with`).
 
     None of the tasks is mandatory, i.e. you can have auto-populated non-unique
@@ -45,6 +45,10 @@ class AutoSlugField(SlugField):
         as the name of attribute from which to fill the slug. If callable is given,
         it should accept `instance` parameter and return a value to fill the slug
         with.
+    :param sep: string: if defined, overrides default separator for automatically
+        incremented slug index (i.e. the "-" in "foo-2").
+    :param slugify: callable: if defined, overrides `AUTOSLUG_SLUGIFY_FUNCTION`
+        defined in :doc:`settings`.
     :param unique: boolean: ensure total slug uniqueness (unless more precise
         `unique_with` is defined).
     :param unique_with: string or tuple of strings: name or names of attributes
@@ -118,6 +122,12 @@ class AutoSlugField(SlugField):
         # autoslugify value from a custom callable
         # (ex. usage: user profile models)
         slug = AutoSlugField(populate_from=lambda instance: instance.user.get_full_name())
+
+        # autoslugify value using custom `slugify` function
+        from autoslug.settings import slugify as default_slugify
+        def custom_slugify(value):
+            return default_slugify(value).replace('-', '_')
+        slug = AutoSlugField(slugify=custom_slugify)
     """
     def __init__(self, *args, **kwargs):
         kwargs['max_length'] = kwargs.get('max_length', 50)
@@ -131,6 +141,11 @@ class AutoSlugField(SlugField):
         self.unique_with = kwargs.pop('unique_with', ())
         if isinstance(self.unique_with, basestring):
             self.unique_with = (self.unique_with,)
+
+        self.slugify = kwargs.pop('slugify', slugify)
+        assert hasattr(self.slugify, '__call__')
+
+        self.index_sep = kwargs.pop('sep', SLUG_INDEX_SEPARATOR)
 
         # backward compatibility
         if kwargs.get('unique_with_date'):
@@ -159,7 +174,7 @@ class AutoSlugField(SlugField):
                 print 'Failed to populate slug %s.%s from %s' % \
                     (instance._meta.object_name, self.name, self.populate_from)
 
-        slug = slugify(value)
+        slug = self.slugify(value)
 
         if not slug:
             # no incoming value,  use model name
@@ -264,7 +279,6 @@ class AutoSlugField(SlugField):
         if self.max_length < len(slug):
             slug = slug[:self.max_length]
         orig_slug = slug
-        sep = SLUG_INDEX_SEPARATOR
         # keep changing the slug until it is unique
         while True:
             try:
@@ -276,12 +290,13 @@ class AutoSlugField(SlugField):
                 # the slug is not unique; change once more
                 index += 1
                 # ensure the resulting string is not too long
-                tail_length = len(sep) + len(str(index))
+                tail_length = len(self.index_sep) + len(str(index))
                 combined_length = len(orig_slug) + tail_length
                 if self.max_length < combined_length:
                     orig_slug = orig_slug[:self.max_length - tail_length]
                 # re-generate the slug
-                slug = '%s%s%d' % (orig_slug, sep, index)
+                data = dict(slug=orig_slug, sep=self.index_sep, index=index)
+                slug = '%(slug)s%(sep)s%(index)d' % data
             except model.DoesNotExist:
                 # slug is unique, no model uses it
                 return slug

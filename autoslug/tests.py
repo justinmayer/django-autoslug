@@ -16,6 +16,7 @@ import datetime
 from django.db.models import Model, CharField, DateField, ForeignKey
 
 # this app
+from autoslug.settings import slugify as default_slugify
 from autoslug.fields import AutoSlugField
 
 
@@ -196,3 +197,24 @@ class ModelWithCustomPrimaryKey(Model):
     custom_primary_key = CharField(primary_key=True, max_length=1)
     name = CharField(max_length=200)
     slug = AutoSlugField(populate_from='name', unique=True)
+
+
+custom_slugify = lambda value: default_slugify(value).replace('-', '_')
+class ModelWithCustomSlugifier(Model):
+    """
+    >>> a = ModelWithCustomSlugifier.objects.create(slug='hello world!')
+    >>> b = ModelWithCustomSlugifier.objects.create(slug='hello world!')
+    >>> b.slug
+    'hello_world-2'
+    """
+    slug = AutoSlugField(unique=True, slugify=custom_slugify)
+
+
+class ModelWithCustomSeparator(Model):
+    """
+    >>> a = ModelWithCustomSeparator.objects.create(slug='hello world!')
+    >>> b = ModelWithCustomSeparator.objects.create(slug='hello world!')
+    >>> b.slug
+    'hello-world_2'
+    """
+    slug = AutoSlugField(unique=True, sep='_')
