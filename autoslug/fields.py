@@ -163,6 +163,7 @@ class AutoSlugField(SlugField):
         super(SlugField, self).__init__(*args, **kwargs)
 
     def pre_save(self, instance, add):
+
         # get currently entered slug
         value = self.value_from_object(instance)
 
@@ -281,22 +282,21 @@ class AutoSlugField(SlugField):
         orig_slug = slug
         # keep changing the slug until it is unique
         while True:
-            try:
-                # raise model.DoesNotExist if current slug is unique
-                rival = model.objects.get(**dict(lookups + ((self.name, slug),) ))
-                # not unique, but maybe the "rival" is the instance itself?
-                if rival == instance:
-                    raise model.DoesNotExist
-                # the slug is not unique; change once more
-                index += 1
-                # ensure the resulting string is not too long
-                tail_length = len(self.index_sep) + len(str(index))
-                combined_length = len(orig_slug) + tail_length
-                if self.max_length < combined_length:
-                    orig_slug = orig_slug[:self.max_length - tail_length]
-                # re-generate the slug
-                data = dict(slug=orig_slug, sep=self.index_sep, index=index)
-                slug = '%(slug)s%(sep)s%(index)d' % data
-            except model.DoesNotExist:
-                # slug is unique, no model uses it
+            rivals = model.objects\
+                          .filter(**dict(lookups + ((self.name, slug),) ))\
+                          .exclude(pk=instance.pk)                              
+            if not rivals:
+                # the slug is unique, no model uses it
                 return slug
+                
+            # the slug is not unique; change once more
+            index += 1
+            # ensure the resulting string is not too long
+            tail_length = len(self.index_sep) + len(str(index))
+            combined_length = len(orig_slug) + tail_length
+            if self.max_length < combined_length:
+                orig_slug = orig_slug[:self.max_length - tail_length]
+            # re-generate the slug
+            data = dict(slug=orig_slug, sep=self.index_sep, index=index)
+            slug = '%(slug)s%(sep)s%(index)d' % data
+            
