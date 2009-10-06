@@ -65,6 +65,13 @@ class ModelWithUniqueSlugFK(Model):
     >>> d = ModelWithUniqueSlugFK.objects.create(name=greeting, simple_model=sm1)
     >>> d.slug
     'hello-world-3'
+    >>> sm3.name = 'test'
+    >>> sm3.save()
+    >>> c.slug
+    'hello-world'
+    >>> c.save()
+    >>> c.slug
+    'hello-world-4'
     """
     name = CharField(max_length=200)
     simple_model = ForeignKey(SimpleModel)
