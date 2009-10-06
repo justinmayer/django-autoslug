@@ -1,20 +1,67 @@
-django-autoslug is a pluggable application for Django web framework
-containing an extended version of SlugField class shipped with Django itself.
-django-autoslug is written by Andy Mikhailenko <andy at neithere dot net>.
-See the file AUTHORS for the complete list of authors of this application.
+django-autoslug
+===============
+
+Django-autoslug is a reusable Django application that provides an improved
+slug field which can automatically:
+
+a) populate itself from another field,
+b) preserve uniqueness of the value and
+c) use custom `slugify()` functions for better i18n.
+
+Examples
+--------
+
+A simple example::
+
+    from django.db.models import CharField, Model
+    from autoslug.fields import AutoSlugField
+
+    class Article(Model):
+        title = CharField(max_length=200)
+        slug = AutoSlugField(populate_from='title')
+
+More complex example::
+
+    from django.db.models import CharField, DateField, ForeignKey, Model
+    from django.contrib.auth.models import User
+    from autoslug.fields import AutoSlugField
+
+    class Article(Model):
+        title = CharField(max_length=200)
+        pub_date = DateField(auto_now_add=True)
+        author = ForeignKey(User)
+        slug = AutoSlugField(populate_from=lambda instance: instance.title,
+                             unique_with=['author__name', 'pub_date__month'],
+                             slugify=lambda value: value.replace(' ','-'))
+
+Documentation
+-------------
+
+See complete `HTML documentation <http://packages.python.org/django-autoslug/>`_
+for details. Sometimes it may get slightly outdated. You can always have the
+latest snapsnot by building it from the source (using Sphinx).
+
+Community
+---------
+
+This application was initially created by Andy Mikhailenko and then improved
+by other developers. They are listed in the AUTHORS file.
 
 Please feel free to file issues and/or submit patches.
 
-django-autoslug is free software; you can redistribute it and/or
+Licensing
+---------
+
+Django-autoslug is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public License as
 published by the Free Software Foundation; either version 3 of the
 License, or (at your option) any later version.
 
-django-autoslug is distributed in the hope that it will be useful,
+Django-autoslug is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
 Lesser General Public License for more details.
 
 You should have received a copy of the GNU Lesser General Public
 License along with this program; see the file COPYING.LESSER. If not,
-see <http://gnu.org/licenses/>.
+see `GNU licenses <http://gnu.org/licenses/>`_.

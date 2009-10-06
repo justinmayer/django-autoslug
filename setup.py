@@ -12,6 +12,7 @@
 
 "django-autoslug setup"
 
+import os
 from setuptools import setup
 from autoslug import __version__
 
@@ -19,15 +20,13 @@ setup(
     name     = 'django-autoslug',
     version  = __version__,
     packages = ['autoslug'],
-    
+
     requires = ['python (>= 2.4)', 'django (>= 1.0)'],
     # in case you want to use slugify() with support for transliteration:
     extras_require = {'cyrillic': 'pytils >= 0.2'},
-    
-    description  = 'An automated slug field for Django',
-    long_description = "A slug field which can automatically a) populate itself "\
-                       "from another field, b) preserve uniqueness of the value "\
-                       "and c) use custom slugify() functions for better i18n.",
+
+    description  = 'An automated slug field for Django.',
+    long_description = open('README').read(),
     author       = 'Andy Mikhailenko',
     author_email = 'andy@neithere.net',
     url          = 'http://bitbucket.org/neithere/django-autoslug/',
