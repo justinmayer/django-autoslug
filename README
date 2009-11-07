@@ -14,7 +14,7 @@ Examples
 A simple example::
 
     from django.db.models import CharField, Model
-    from autoslug.fields import AutoSlugField
+    from autoslug import AutoSlugField
 
     class Article(Model):
         title = CharField(max_length=200)
@@ -24,7 +24,7 @@ More complex example::
 
     from django.db.models import CharField, DateField, ForeignKey, Model
     from django.contrib.auth.models import User
-    from autoslug.fields import AutoSlugField
+    from autoslug import AutoSlugField
 
     class Article(Model):
         title = CharField(max_length=200)

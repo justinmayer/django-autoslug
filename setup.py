@@ -12,11 +12,14 @@
 
 import os
 from setuptools import setup
+from version import version
 
+
+readme = open(os.path.join(os.path.dirname(__file__), 'README')).read()
 
 setup(
     name     = 'django-autoslug',
-    version  = '1.3.3',
+    version  = version,
     packages = ['autoslug'],
 
     requires = ['python (>= 2.4)', 'django (>= 1.0)'],
@@ -24,7 +27,7 @@ setup(
     extras_require = {'cyrillic': 'pytils >= 0.2'},
 
     description  = 'An automated slug field for Django.',
-    long_description = open('README').read(),
+    long_description = readme,
     author       = 'Andy Mikhailenko',
     author_email = 'andy@neithere.net',
     url          = 'http://bitbucket.org/neithere/django-autoslug/',
