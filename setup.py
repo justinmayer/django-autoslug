@@ -10,15 +10,13 @@
 #  Software Foundation. See the file README for copying conditions.
 #
 
-"django-autoslug setup"
-
 import os
 from setuptools import setup
-from autoslug import __version__
+
 
 setup(
     name     = 'django-autoslug',
-    version  = __version__,
+    version  = '1.3.3',
     packages = ['autoslug'],
 
     requires = ['python (>= 2.4)', 'django (>= 1.0)'],
@@ -32,7 +30,7 @@ setup(
     url          = 'http://bitbucket.org/neithere/django-autoslug/',
     download_url = 'http://bitbucket.org/neithere/django-autoslug/get/tip.zip',
     license      = 'GNU Lesser General Public License (LGPL), Version 3',
-    keywords     = 'django field slug auto transliteration i18n',
+    keywords     = 'django field slug auto unique transliteration i18n',
     classifiers  = [
         'Development Status :: 5 - Production/Stable',
         'Environment :: Web Environment',

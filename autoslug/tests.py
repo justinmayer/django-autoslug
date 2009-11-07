@@ -17,7 +17,7 @@ from django.db.models import Model, CharField, DateField, ForeignKey
 
 # this app
 from autoslug.settings import slugify as default_slugify
-from autoslug.fields import AutoSlugField
+from autoslug import AutoSlugField
 
 
 class SimpleModel(Model):

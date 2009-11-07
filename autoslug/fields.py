@@ -19,6 +19,8 @@ from django.db.models.fields import FieldDoesNotExist, DateField, SlugField
 from autoslug.settings import slugify
 
 
+__all__ = ['AutoSlugField']
+
 SLUG_INDEX_SEPARATOR = '-'    # the "-" in "foo-2"
 
 
@@ -70,7 +72,7 @@ class AutoSlugField(SlugField):
     Example usage::
 
         from django.db import models
-        from autoslug.fields import AutoSlugField
+        from autoslug import AutoSlugField
 
         class Article(models.Model):
             '''An article with title, date and slug. The slug is not totally
@@ -284,11 +286,11 @@ class AutoSlugField(SlugField):
         while True:
             rivals = model.objects\
                           .filter(**dict(lookups + ((self.name, slug),) ))\
-                          .exclude(pk=instance.pk)                              
+                          .exclude(pk=instance.pk)
             if not rivals:
                 # the slug is unique, no model uses it
                 return slug
-                
+
             # the slug is not unique; change once more
             index += 1
             # ensure the resulting string is not too long
@@ -299,4 +301,3 @@ class AutoSlugField(SlugField):
             # re-generate the slug
             data = dict(slug=orig_slug, sep=self.index_sep, index=index)
             slug = '%(slug)s%(sep)s%(index)d' % data
-            

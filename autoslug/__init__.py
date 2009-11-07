@@ -9,7 +9,6 @@
 #  Software Foundation. See the file README for copying conditions.
 #
 
-__author__  = 'Andy Mikhailenko'
-__license__ = 'GNU Lesser General Public License (GPL), Version 3'
-__url__     = 'http://bitbucket.org/neithere/django-autoslug/'
-__version__ = '1.3.2'
+from fields import AutoSlugField
+
+__all__     = ['AutoSlugField']
