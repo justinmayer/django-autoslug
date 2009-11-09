@@ -12,14 +12,13 @@
 
 import os
 from setuptools import setup
-from version import version
 
 
 readme = open(os.path.join(os.path.dirname(__file__), 'README')).read()
 
 setup(
     name     = 'django-autoslug',
-    version  = version,
+    version  = '1.3.4',
     packages = ['autoslug'],
 
     requires = ['python (>= 2.4)', 'django (>= 1.0)'],
