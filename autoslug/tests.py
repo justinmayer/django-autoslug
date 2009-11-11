@@ -157,7 +157,19 @@ class ModelWithLongName(Model):
     >>> a.save()
     >>> len(a.slug)    # original slug is cropped by field length
     50
-    >>> b = ModelWithLongName(name=long_name)
+    """
+    name = CharField(max_length=200)
+    slug = AutoSlugField(populate_from='name')
+
+
+class ModelWithLongNameUnique(Model):
+    """
+    >>> long_name = 'x' * 250
+    >>> a = ModelWithLongNameUnique(name=long_name)
+    >>> a.save()
+    >>> len(a.slug)    # original slug is cropped by field length
+    50
+    >>> b = ModelWithLongNameUnique(name=long_name)
     >>> b.save()
     >>> b.slug[-3:]    # uniqueness is forced
     'x-2'

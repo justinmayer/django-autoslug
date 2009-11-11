@@ -185,6 +185,8 @@ class AutoSlugField(SlugField):
 
         assert slug, 'slug is defined before trying to ensure uniqueness'
 
+        slug = self._crop_slug(slug)
+
         # ensure the slug is unique (if required)
         if self.unique or self.unique_with:
             slug = self._generate_unique_slug(instance, slug)
@@ -279,8 +281,7 @@ class AutoSlugField(SlugField):
         model = instance.__class__
         field_name = self.name
         index = 1
-        if self.max_length < len(slug):
-            slug = slug[:self.max_length]
+        slug = self._crop_slug(slug)
         orig_slug = slug
         # keep changing the slug until it is unique
         while True:
@@ -301,3 +302,8 @@ class AutoSlugField(SlugField):
             # re-generate the slug
             data = dict(slug=orig_slug, sep=self.index_sep, index=index)
             slug = '%(slug)s%(sep)s%(index)d' % data
+
+    def _crop_slug(self, slug):
+        if self.max_length < len(slug):
+            return slug[:self.max_length]
+        return slug
