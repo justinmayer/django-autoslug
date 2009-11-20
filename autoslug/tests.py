@@ -237,3 +237,30 @@ class ModelWithCustomSeparator(Model):
     'hello-world_2'
     """
     slug = AutoSlugField(unique=True, sep='_')
+
+
+class ModelWithWrongFieldOrder(Model):
+    """
+    >>> a = ModelWithWrongFieldOrder(slug='test')
+    >>> a.save()
+    Traceback (most recent call last):
+    ...
+    ValueError: Could not check uniqueness of ModelWithWrongFieldOrder.slug with \
+    respect to ModelWithWrongFieldOrder.date because the latter is empty. Please \
+    ensure that "slug" is declared *after* all fields it depends on (i.e. "date"), \
+    and that they are not blank.
+    """
+    slug = AutoSlugField(unique_with='date')
+    date = DateField(blank=False, null=False)
+
+
+class ModelWithAcceptableEmptyDependency(Model):
+    """
+    >>> model = ModelWithAcceptableEmptyDependency
+    >>> instances = [model.objects.create(slug='hello') for x in range(0,2)]
+    >>> [x.slug for x in model.objects.all()]
+    [u'hello', u'hello-2']
+    """
+    date = DateField(blank=True, null=True)
+    slug = AutoSlugField(unique_with='date')
+

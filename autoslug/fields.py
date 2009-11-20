@@ -241,6 +241,8 @@ class AutoSlugField(SlugField):
 
                 value = getattr(instance, field_name)
                 if not value:
+                    if field.blank:
+                        break
                     raise ValueError('Could not check uniqueness of %s.%s with'
                                      ' respect to %s.%s because the latter is empty.'
                                      ' Please ensure that "%s" is declared *after*'
