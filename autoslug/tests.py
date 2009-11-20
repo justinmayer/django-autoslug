@@ -239,6 +239,43 @@ class ModelWithCustomSeparator(Model):
     slug = AutoSlugField(unique=True, sep='_')
 
 
+class ModelWithReferenceToItself(Model):
+    """
+    >>> a = ModelWithReferenceToItself(slug='test')
+    >>> a.save()
+    Traceback (most recent call last):
+    ...
+    ValueError: Attribute ModelWithReferenceToItself.slug references itself \
+    in `unique_with`. Please use "unique=True" for this case.
+    """
+    slug = AutoSlugField(unique_with='slug')
+
+
+class ModelWithWrongReferencedField(Model):
+    """
+    >>> a = ModelWithWrongReferencedField(slug='test')
+    >>> a.save()
+    Traceback (most recent call last):
+    ...
+    ValueError: Could not find attribute ModelWithWrongReferencedField.wrong_field \
+    referenced by ModelWithWrongReferencedField.slug (see constraint `unique_with`)
+    """
+    slug = AutoSlugField(unique_with='wrong_field')
+
+
+class ModelWithWrongLookupInUniqueWith(Model):
+    """
+    >>> a = ModelWithWrongLookupInUniqueWith(name='test', slug='test')
+    >>> a.save()
+    Traceback (most recent call last):
+    ...
+    ValueError: Could not resolve lookup "name__foo" in `unique_with` of \
+    ModelWithWrongLookupInUniqueWith.slug
+    """
+    slug = AutoSlugField(unique_with='name__foo')
+    name = CharField(max_length=10)
+
+
 class ModelWithWrongFieldOrder(Model):
     """
     >>> a = ModelWithWrongFieldOrder(slug='test')
@@ -247,8 +284,7 @@ class ModelWithWrongFieldOrder(Model):
     ...
     ValueError: Could not check uniqueness of ModelWithWrongFieldOrder.slug with \
     respect to ModelWithWrongFieldOrder.date because the latter is empty. Please \
-    ensure that "slug" is declared *after* all fields it depends on (i.e. "date"), \
-    and that they are not blank.
+    ensure that "slug" is declared *after* all fields listed in unique_with.
     """
     slug = AutoSlugField(unique_with='date')
     date = DateField(blank=False, null=False)

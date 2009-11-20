@@ -13,10 +13,11 @@
 from warnings import warn
 
 # django
-from django.db.models.fields import FieldDoesNotExist, DateField, SlugField
+from django.db.models.fields import SlugField
 
 # app
 from autoslug.settings import slugify
+import utils
 
 
 __all__ = ['AutoSlugField']
@@ -151,7 +152,7 @@ class AutoSlugField(SlugField):
 
         # backward compatibility
         if kwargs.get('unique_with_date'):
-            warn('Using unique_with_date="foo" in AutoSlugField is deprecated, '\
+            warn('Using unique_with_date="foo" in AutoSlugField is deprecated, '
                  'use unique_with=("foo",) instead.', DeprecationWarning)
             self.unique_with += (kwargs['unique_with_date'],)
 
@@ -171,7 +172,7 @@ class AutoSlugField(SlugField):
 
         # autopopulate (unless the field is editable and has some value)
         if self.populate_from and not value: # and not self.editable:
-            value = self._get_prepopulated_value(instance)
+            value = utils.get_prepopulated_value(self, instance)
 
             if __debug__ and not value:
                 print 'Failed to populate slug %s.%s from %s' % \
@@ -185,127 +186,15 @@ class AutoSlugField(SlugField):
 
         assert slug, 'slug is defined before trying to ensure uniqueness'
 
-        slug = self._crop_slug(slug)
+        slug = utils.crop_slug(self, slug)
 
         # ensure the slug is unique (if required)
         if self.unique or self.unique_with:
-            slug = self._generate_unique_slug(instance, slug)
+            slug = utils.generate_unique_slug(self, instance, slug)
 
         assert slug, 'value is filled before saving'
 
         # make the updated slug available as instance attribute
         setattr(instance, self.name, slug)
 
-        return slug
-
-    def _get_prepopulated_value(self, instance):
-        """Returns preliminary value based on `populate_from`."""
-        if callable(self.populate_from):
-            # AutoSlugField(populate_from=lambda instance: ...)
-            return self.populate_from(instance)
-        else:
-            # AutoSlugField(populate_from='foo')
-            attr = getattr(instance, self.populate_from)
-            return callable(attr) and attr() or attr
-
-    def _generate_unique_slug(self, instance, slug):
-        """
-        Generates unique slug by adding a number to given value until no model
-        instance can be found with such slug. If ``unique_with`` (a tuple of field
-        names) was specified for the field, all these fields are included together
-        in the query when looking for a "rival" model instance.
-        """
-        base_instance = instance
-
-        def _get_lookups(instance, unique_with):
-            "Returns a dict'able tuple of lookups to ensure slug uniqueness"
-            for _field_name in unique_with:
-                if '__' in _field_name:
-                    field_name, inner = _field_name.split('__', 1)
-                else:
-                    field_name, inner = _field_name, None
-
-                if not hasattr(instance, '_meta'):
-                    raise ValueError('Could not resolve lookup "...%s" in %s.%s'
-                                     ' `unique_with`.'
-                                     % (_field_name, base_instance._meta.object_name,
-                                        self.name))
-
-                try:
-                    field = instance._meta.get_field(field_name)
-                except FieldDoesNotExist:
-                    raise ValueError('Could not find attribute %s.%s referenced'
-                                     ' by %s.%s (see constraint `unique_with`)'
-                                     % (instance._meta.object_name, field_name,
-                                        base_instance._meta.object_name, self.name))
-
-                value = getattr(instance, field_name)
-                if not value:
-                    if field.blank:
-                        break
-                    raise ValueError('Could not check uniqueness of %s.%s with'
-                                     ' respect to %s.%s because the latter is empty.'
-                                     ' Please ensure that "%s" is declared *after*'
-                                     ' all fields it depends on (i.e. "%s"), and'
-                                     ' that they are not blank.'
-                                     % (base_instance._meta.object_name, self.name,
-                                        instance._meta.object_name, field_name,
-                                        self.name, '", "'.join(self.unique_with)))
-                if isinstance(field, DateField):    # DateTimeField is a DateField subclass
-                    inner = inner or 'day'
-
-                    if '__' in inner:
-                        raise ValueError('The `unique_with` constraint in %s.%s'
-                                         ' is set to "%s", but AutoSlugField only'
-                                         ' accepts one level of nesting for dates'
-                                         ' (e.g. "date__month").'
-                                         % (base_instance._meta.object_name, self.name,
-                                            _field_name))
-
-                    parts = ['year', 'month', 'day']
-                    try:
-                        granularity = parts.index(inner) + 1
-                    except ValueError:
-                        raise ValueError('expected one of %s, got "%s" in "%s"'
-                                         % (parts, inner, _field_name))
-                    else:
-                        for part in parts[:granularity]:
-                            lookup = '%s__%s' % (field_name, part)
-                            yield lookup, getattr(value, part)
-                else:
-                    if inner:
-                        for res in _get_lookups(value, [inner]):
-                            yield _field_name, res[1]
-                    else:
-                        yield field_name, value
-
-        lookups = tuple(_get_lookups(instance, self.unique_with))
-        model = instance.__class__
-        field_name = self.name
-        index = 1
-        slug = self._crop_slug(slug)
-        orig_slug = slug
-        # keep changing the slug until it is unique
-        while True:
-            rivals = model.objects\
-                          .filter(**dict(lookups + ((self.name, slug),) ))\
-                          .exclude(pk=instance.pk)
-            if not rivals:
-                # the slug is unique, no model uses it
-                return slug
-
-            # the slug is not unique; change once more
-            index += 1
-            # ensure the resulting string is not too long
-            tail_length = len(self.index_sep) + len(str(index))
-            combined_length = len(orig_slug) + tail_length
-            if self.max_length < combined_length:
-                orig_slug = orig_slug[:self.max_length - tail_length]
-            # re-generate the slug
-            data = dict(slug=orig_slug, sep=self.index_sep, index=index)
-            slug = '%(slug)s%(sep)s%(index)d' % data
-
-    def _crop_slug(self, slug):
-        if self.max_length < len(slug):
-            return slug[:self.max_length]
         return slug
