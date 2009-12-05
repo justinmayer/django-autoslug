@@ -15,7 +15,13 @@ from warnings import warn
 # django
 from django.db.models.fields import SlugField
 
-# app
+# 3rd-party
+try:
+    from south.modelsinspector import introspector
+except ImportError:
+    introspector = lambda self: [], {}
+
+# this app
 from autoslug.settings import slugify
 import utils
 
@@ -198,3 +204,9 @@ class AutoSlugField(SlugField):
         setattr(instance, self.name, slug)
 
         return slug
+
+    def south_field_triple(self):
+        "Returns a suitable description of this field for South."
+        args, kwargs = introspector(self)
+        kwargs.update({'populate_from': 'None', 'unique_with': '()'})
+        return ('autoslug.fields.AutoSlugField', args, kwargs)
