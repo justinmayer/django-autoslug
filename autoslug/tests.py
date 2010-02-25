@@ -37,11 +37,11 @@ class ModelWithUniqueSlug(Model):
     >>> a = ModelWithUniqueSlug(name=greeting)
     >>> a.save()
     >>> a.slug
-    'hello-world'
+    u'hello-world'
     >>> b = ModelWithUniqueSlug(name=greeting)
     >>> b.save()
     >>> b.slug
-    'hello-world-2'
+    u'hello-world-2'
     """
     name = CharField(max_length=200)
     slug = AutoSlugField(populate_from='name', unique=True)
@@ -55,23 +55,23 @@ class ModelWithUniqueSlugFK(Model):
     >>> greeting = 'Hello world!'
     >>> a = ModelWithUniqueSlugFK.objects.create(name=greeting, simple_model=sm1)
     >>> a.slug
-    'hello-world'
+    u'hello-world'
     >>> b = ModelWithUniqueSlugFK.objects.create(name=greeting, simple_model=sm2)
     >>> b.slug
-    'hello-world-2'
+    u'hello-world-2'
     >>> c = ModelWithUniqueSlugFK.objects.create(name=greeting, simple_model=sm3)
     >>> c.slug
-    'hello-world'
+    u'hello-world'
     >>> d = ModelWithUniqueSlugFK.objects.create(name=greeting, simple_model=sm1)
     >>> d.slug
-    'hello-world-3'
+    u'hello-world-3'
     >>> sm3.name = 'test'
     >>> sm3.save()
     >>> c.slug
-    'hello-world'
+    u'hello-world'
     >>> c.save()
     >>> c.slug
-    'hello-world-4'
+    u'hello-world-4'
     """
     name = CharField(max_length=200)
     simple_model = ForeignKey(SimpleModel)
@@ -86,11 +86,11 @@ class ModelWithUniqueSlugDate(Model):
     >>> for m in a,b,c:
     ...     m.save()
     >>> a.slug
-    'test'
+    u'test'
     >>> b.slug
-    'test-2'
+    u'test-2'
     >>> c.slug
-    'test'
+    u'test'
     """
     date = DateField()
     slug = AutoSlugField(unique_with='date')
@@ -104,11 +104,11 @@ class ModelWithUniqueSlugDay(Model):    # same as ...Date, just more explicit
     >>> for m in a,b,c:
     ...     m.save()
     >>> a.slug
-    'test'
+    u'test'
     >>> b.slug
-    'test-2'
+    u'test-2'
     >>> c.slug
-    'test'
+    u'test'
     """
     date = DateField()
     slug = AutoSlugField(unique_with='date__day')
@@ -122,11 +122,11 @@ class ModelWithUniqueSlugMonth(Model):
     >>> for m in a,b,c:
     ...     m.save()
     >>> a.slug
-    'test'
+    u'test'
     >>> b.slug
-    'test-2'
+    u'test-2'
     >>> c.slug
-    'test'
+    u'test'
     """
     date = DateField()
     slug = AutoSlugField(unique_with='date__month')
@@ -140,11 +140,11 @@ class ModelWithUniqueSlugYear(Model):
     >>> for m in a,b,c:
     ...     m.save()
     >>> a.slug
-    'test'
+    u'test'
     >>> b.slug
-    'test-2'
+    u'test-2'
     >>> c.slug
-    'test'
+    u'test'
     """
     date = DateField()
     slug = AutoSlugField(unique_with='date__year')
@@ -172,7 +172,7 @@ class ModelWithLongNameUnique(Model):
     >>> b = ModelWithLongNameUnique(name=long_name)
     >>> b.save()
     >>> b.slug[-3:]    # uniqueness is forced
-    'x-2'
+    u'x-2'
     >>> len(b.slug)    # slug is cropped
     50
     """
@@ -184,7 +184,7 @@ class ModelWithCallable(Model):
     """
     >>> a = ModelWithCallable.objects.create(name='larch')
     >>> a.slug
-    'the-larch'
+    u'the-larch'
     """
     name = CharField(max_length=200)
     slug = AutoSlugField(populate_from=lambda instance: u'the %s' % instance.name)
@@ -194,7 +194,7 @@ class ModelWithCallableAttr(Model):
     """
     >>> a = ModelWithCallableAttr.objects.create(name='albatross')
     >>> a.slug
-    'spam-albatross-and-spam'
+    u'spam-albatross-and-spam'
     """
     name = CharField(max_length=200)
     slug = AutoSlugField(populate_from='get_name')
@@ -211,7 +211,7 @@ class ModelWithCustomPrimaryKey(Model):
     >>> b = ModelWithCustomPrimaryKey.objects.create(custom_primary_key='b',
     ...                                              name='name used in slug')
     >>> a.slug
-    'name-used-in-slug'
+    u'name-used-in-slug'
     """
     custom_primary_key = CharField(primary_key=True, max_length=1)
     name = CharField(max_length=200)
@@ -224,7 +224,7 @@ class ModelWithCustomSlugifier(Model):
     >>> a = ModelWithCustomSlugifier.objects.create(slug='hello world!')
     >>> b = ModelWithCustomSlugifier.objects.create(slug='hello world!')
     >>> b.slug
-    'hello_world-2'
+    u'hello_world-2'
     """
     slug = AutoSlugField(unique=True, slugify=custom_slugify)
 
@@ -234,7 +234,7 @@ class ModelWithCustomSeparator(Model):
     >>> a = ModelWithCustomSeparator.objects.create(slug='hello world!')
     >>> b = ModelWithCustomSeparator.objects.create(slug='hello world!')
     >>> b.slug
-    'hello-world_2'
+    u'hello-world_2'
     """
     slug = AutoSlugField(unique=True, sep='_')
 
