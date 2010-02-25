@@ -26,7 +26,8 @@ __doc__ = """Available settings for django-autoslug:
       # custom function, defined inline:
       AUTOSLUG_SLUGIFY_FUNCTION = lambda slug: 'can i haz %s?' % slug
 
-  Default value is 'django.template.defaultfilters.slugify'.
+  Default value is 'django.template.defaultfilters.slugify' or,
+  pytils.translit's slugify function if installed.
 """
 
 # use custom slugifying function if any
