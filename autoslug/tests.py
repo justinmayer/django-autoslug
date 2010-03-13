@@ -300,3 +300,17 @@ class ModelWithAcceptableEmptyDependency(Model):
     date = DateField(blank=True, null=True)
     slug = AutoSlugField(unique_with='date')
 
+
+class ModelWithAutoUpdateEnabled(Model):
+    """
+    >>> a = ModelWithAutoUpdateEnabled(name='My name')
+    >>> a.save()
+    >>> a.slug
+    u'my-name'
+    >>> a.name = 'My new name'
+    >>> a.save()
+    >>> a.slug
+    u'my-new-name'
+    """
+    name = CharField(max_length=200)
+    slug = AutoSlugField(populate_from='name', always_update=True)

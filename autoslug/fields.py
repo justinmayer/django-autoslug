@@ -169,6 +169,8 @@ class AutoSlugField(SlugField):
         # Set db_index=True unless it's been set manually.
         if 'db_index' not in kwargs:
             kwargs['db_index'] = True
+
+        self.always_update = kwargs.pop('always_update', False)
         super(SlugField, self).__init__(*args, **kwargs)
 
     def pre_save(self, instance, add):
@@ -177,7 +179,7 @@ class AutoSlugField(SlugField):
         value = self.value_from_object(instance)
 
         # autopopulate (unless the field is editable and has some value)
-        if self.populate_from and not value: # and not self.editable:
+        if (self.populate_from and not value) or self.always_update: # and not self.editable:
             value = utils.get_prepopulated_value(self, instance)
 
             if __debug__ and not value:
