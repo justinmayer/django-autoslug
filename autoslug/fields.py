@@ -50,6 +50,11 @@ class AutoSlugField(SlugField):
     (`unique_with`) or globally (`unique`) and adding a number to the slug to make
     it unique.
 
+    :param always_update: boolean: if True, the slug is updated each time the
+        model instance is saved. Use with care because `cool URIs don't
+        change`_ (and the slug is usually a part of object's URI). Note that
+        even if the field is editable, any manual changes will be lost when
+        this option is activated.
     :param populate_from: string or callable: if string is given, it is considered
         as the name of attribute from which to fill the slug. If callable is given,
         it should accept `instance` parameter and return a value to fill the slug
@@ -70,6 +75,8 @@ class AutoSlugField(SlugField):
         reappear within a day or within some author's articles but never within
         a day for the same author. Foreign keys are also supported, i.e. not only
         `unique_with='author'` will do, but also `unique_with='author__name'`.
+
+    .. _cool URIs don't change: http://w3.org/Provider/Style/URI.html
 
     .. note:: always place any slug attribute *after* attributes referenced
         by it (i.e. those from which you wish to `populate_from` or check
@@ -178,8 +185,8 @@ class AutoSlugField(SlugField):
         # get currently entered slug
         value = self.value_from_object(instance)
 
-        # autopopulate (unless the field is editable and has some value)
-        if (self.populate_from and not value) or self.always_update: # and not self.editable:
+        # autopopulate
+        if self.always_update or (self.populate_from and not value):
             value = utils.get_prepopulated_value(self, instance)
 
             if __debug__ and not value:
