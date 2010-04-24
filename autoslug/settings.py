@@ -35,11 +35,16 @@ slugify = getattr(settings, 'AUTOSLUG_SLUGIFY_FUNCTION', None)
 
 if not slugify:
     try:
-        # more i18n-friendly slugify function (supports Russian transliteration)
-        from pytils.translit import slugify
+        # i18n-friendly approach
+        from unidecode import unidecode
+        slugify = lambda s: unidecode(s).replace(' ', '-')
     except ImportError:
-        # fall back to Django's default one
-        slugify = 'django.template.defaultfilters.slugify'
+        try:
+            # Cyrillic transliteration (primarily Russian)
+            from pytils.translit import slugify
+        except ImportError:
+            # fall back to Django's default method
+            slugify = 'django.template.defaultfilters.slugify'
 
 # find callable by string
 if isinstance(slugify, str):
