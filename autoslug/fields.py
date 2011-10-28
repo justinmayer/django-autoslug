@@ -177,6 +177,10 @@ class AutoSlugField(SlugField):
         if 'db_index' not in kwargs:
             kwargs['db_index'] = True
 
+        # When using model inheritence, set manager to search for matching
+        # slug values
+        self.instance_manager = kwargs.pop('instance_manager', None)
+
         self.always_update = kwargs.pop('always_update', False)
         super(SlugField, self).__init__(*args, **kwargs)
 
@@ -184,6 +188,8 @@ class AutoSlugField(SlugField):
 
         # get currently entered slug
         value = self.value_from_object(instance)
+
+        instance_manager = self.instance_manager
 
         # autopopulate
         if self.always_update or (self.populate_from and not value):
@@ -205,7 +211,7 @@ class AutoSlugField(SlugField):
 
         # ensure the slug is unique (if required)
         if self.unique or self.unique_with:
-            slug = utils.generate_unique_slug(self, instance, slug)
+            slug = utils.generate_unique_slug(self, instance, slug, instance_manager)
 
         assert slug, 'value is filled before saving'
 
