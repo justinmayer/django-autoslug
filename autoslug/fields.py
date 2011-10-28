@@ -146,8 +146,9 @@ class AutoSlugField(SlugField):
             unique but there will be no two articles with the same slug within
             any month.
             '''
+            objects = models.Manager()
             title = models.CharField(max_length=200)
-            slug = AutoSlugField(populate_from='title', unique_with='pub_date__month')
+            slug = AutoSlugField(populate_from='title', unique_with='pub_date__month', instance_manager=objects)
 
         class NewsArticle(Article):
             pass
