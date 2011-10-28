@@ -139,6 +139,19 @@ class AutoSlugField(SlugField):
         # (ex. usage: user profile models)
         slug = AutoSlugField(populate_from=lambda instance: instance.user.get_full_name())
 
+        # specifiy model manager for looking up slugs shared by subclasses
+
+        class Article(models.Model):
+            '''An article with title, date and slug. The slug is not totally
+            unique but there will be no two articles with the same slug within
+            any month.
+            '''
+            title = models.CharField(max_length=200)
+            slug = AutoSlugField(populate_from='title', unique_with='pub_date__month')
+
+        class NewsArticle(Article):
+            pass
+
         # autoslugify value using custom `slugify` function
         from autoslug.settings import slugify as default_slugify
         def custom_slugify(value):
