@@ -1,0 +1,10 @@
+Development Workflow
+====================
+
+1. File a ticket at Bitbucket (optional).
+2. Fork main repository.
+3. Write tests and code that passes them. (Check with ./run_tests.py)
+4. Document the code: add comments and docstrings so that anyone can easily
+   understand what does your code do and why.
+5. Ensure that the new code is fully covered with tests.
+6. Send pull request.
