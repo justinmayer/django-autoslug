@@ -148,7 +148,7 @@ class AutoSlugField(SlugField):
             '''
             objects = models.Manager()
             title = models.CharField(max_length=200)
-            slug = AutoSlugField(populate_from='title', unique_with='pub_date__month', instance_manager=objects)
+            slug = AutoSlugField(populate_from='title', unique_with='pub_date__month', manager=objects)
 
         class NewsArticle(Article):
             pass
@@ -193,7 +193,7 @@ class AutoSlugField(SlugField):
 
         # When using model inheritence, set manager to search for matching
         # slug values
-        self.instance_manager = kwargs.pop('instance_manager', None)
+        self.manager = kwargs.pop('manager', None)
 
         self.always_update = kwargs.pop('always_update', False)
         super(SlugField, self).__init__(*args, **kwargs)
@@ -203,7 +203,7 @@ class AutoSlugField(SlugField):
         # get currently entered slug
         value = self.value_from_object(instance)
 
-        instance_manager = self.instance_manager
+        manager = self.manager
 
         # autopopulate
         if self.always_update or (self.populate_from and not value):
@@ -225,7 +225,7 @@ class AutoSlugField(SlugField):
 
         # ensure the slug is unique (if required)
         if self.unique or self.unique_with:
-            slug = utils.generate_unique_slug(self, instance, slug, instance_manager)
+            slug = utils.generate_unique_slug(self, instance, slug, manager)
 
         assert slug, 'value is filled before saving'
 
