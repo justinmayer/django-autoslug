@@ -4,7 +4,8 @@ egg-info
 ^_?dist/
 ^temp/
 ~$
-\.pyc$
+\.py[co]$
+^coverage/
 
 
 #eclipse files
