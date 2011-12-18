@@ -139,7 +139,7 @@ class AutoSlugField(SlugField):
         # (ex. usage: user profile models)
         slug = AutoSlugField(populate_from=lambda instance: instance.user.get_full_name())
 
-        # specifiy model manager for looking up slugs shared by subclasses
+        # specify model manager for looking up slugs shared by subclasses
 
         class Article(models.Model):
             '''An article with title, date and slug. The slug is not totally
