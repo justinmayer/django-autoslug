@@ -139,6 +139,20 @@ class AutoSlugField(SlugField):
         # (ex. usage: user profile models)
         slug = AutoSlugField(populate_from=lambda instance: instance.user.get_full_name())
 
+        # specifiy model manager for looking up slugs shared by subclasses
+
+        class Article(models.Model):
+            '''An article with title, date and slug. The slug is not totally
+            unique but there will be no two articles with the same slug within
+            any month.
+            '''
+            objects = models.Manager()
+            title = models.CharField(max_length=200)
+            slug = AutoSlugField(populate_from='title', unique_with='pub_date__month', manager=objects)
+
+        class NewsArticle(Article):
+            pass
+
         # autoslugify value using custom `slugify` function
         from autoslug.settings import slugify as default_slugify
         def custom_slugify(value):
@@ -177,6 +191,10 @@ class AutoSlugField(SlugField):
         if 'db_index' not in kwargs:
             kwargs['db_index'] = True
 
+        # When using model inheritence, set manager to search for matching
+        # slug values
+        self.manager = kwargs.pop('manager', None)
+
         self.always_update = kwargs.pop('always_update', False)
         super(SlugField, self).__init__(*args, **kwargs)
 
@@ -184,6 +202,8 @@ class AutoSlugField(SlugField):
 
         # get currently entered slug
         value = self.value_from_object(instance)
+
+        manager = self.manager
 
         # autopopulate
         if self.always_update or (self.populate_from and not value):
@@ -205,7 +225,7 @@ class AutoSlugField(SlugField):
 
         # ensure the slug is unique (if required)
         if self.unique or self.unique_with:
-            slug = utils.generate_unique_slug(self, instance, slug)
+            slug = utils.generate_unique_slug(self, instance, slug, manager)
 
         assert slug, 'value is filled before saving'
 

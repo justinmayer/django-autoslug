@@ -13,7 +13,7 @@
 import datetime
 
 # django
-from django.db.models import Model, CharField, DateField, ForeignKey
+from django.db.models import Model, CharField, DateField, ForeignKey, Manager
 
 # this app
 from autoslug.settings import slugify as default_slugify
@@ -314,3 +314,36 @@ class ModelWithAutoUpdateEnabled(Model):
     """
     name = CharField(max_length=200)
     slug = AutoSlugField(populate_from='name', always_update=True)
+
+
+class ModelWithSlugSpaceSharedIntegrityError(ModelWithUniqueSlug):
+    """
+    >>> a = ModelWithUniqueSlug(name='My name')
+    >>> a.save()
+    >>> b = ModelWithSlugSpaceSharedIntegrityError(name='My name')
+    >>> b.save()
+    Traceback (most recent call last):
+    ...
+    IntegrityError: column slug is not unique
+    """
+
+
+class SharedSlugSpace(Model):
+    objects = Manager()
+    name = CharField(max_length=200)
+    # ensure that any subclasses use the base model's manager for testing
+    # slug uniqueness
+    slug = AutoSlugField(populate_from='name', unique=True, manager=objects)
+
+
+class ModelWithSlugSpaceShared(SharedSlugSpace):
+    """
+    >>> a = SharedSlugSpace(name='My name')
+    >>> a.save()
+    >>> a.slug
+    u'my-name'
+    >>> b = ModelWithSlugSpaceShared(name='My name')
+    >>> b.save()
+    >>> b.slug
+    u'my-name-2'
+    """
