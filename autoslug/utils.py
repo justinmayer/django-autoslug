@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # django
+from django.core.exceptions import ImproperlyConfigured
 from django.db.models.fields import FieldDoesNotExist, DateField
 
 
@@ -125,7 +126,40 @@ def get_uniqueness_lookups(field, instance, unique_with):
             else:
                 yield field_name, value
 
+
 def crop_slug(field, slug):
     if field.max_length < len(slug):
         return slug[:field.max_length]
     return slug
+
+
+try:
+    import translitcodec
+except ImportError:
+    pass
+else:
+    import re
+    PUNCT_RE = re.compile(r'[\t !"#$%&\'()*\-/<=>?@\[\\\]^_`{|},.]+')
+
+    def translitcodec_slugify(codec):
+        def _slugify(value, delim=u'-', encoding=''):
+            """
+            Generates an ASCII-only slug.
+
+            Borrowed from http://flask.pocoo.org/snippets/5/
+            """
+            if encoding:
+                encoder = "%s/%s" % (codec, encoding)
+            else:
+                encoder = codec
+            result = []
+            for word in PUNCT_RE.split(value.lower()):
+                word = word.encode(encoder)
+                if word:
+                    result.append(word)
+            return unicode(delim.join(result))
+        return _slugify
+
+    translit_long = translitcodec_slugify("translit/long")
+    translit_short = translitcodec_slugify("translit/short")
+    translit_one = translitcodec_slugify("translit/one")

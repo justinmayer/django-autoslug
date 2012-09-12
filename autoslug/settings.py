@@ -26,8 +26,23 @@ __doc__ = """Available settings for django-autoslug:
       # custom function, defined inline:
       AUTOSLUG_SLUGIFY_FUNCTION = lambda slug: 'can i haz %s?' % slug
 
-  Default value is 'django.template.defaultfilters.slugify' or,
-  pytils.translit's slugify function if installed.
+  Default value is 'django.template.defaultfilters.slugify', unidecode's
+  unidecode function or pytils.translit's slugify function if installed.
+
+  django-autoslug also ships a couple of slugify functions that use
+  the translitcodec_ Python library, e.g.::
+
+     # using as many characters as needed to make a natural replacement
+     AUTOSLUG_SLUGIFY_FUNCTION = 'autoslug.utils.translit_long'
+
+     # using the minimum number of characters to make a replacement
+     AUTOSLUG_SLUGIFY_FUNCTION = 'autoslug.utils.translit_short'
+
+     # only performing single character replacements
+     AUTOSLUG_SLUGIFY_FUNCTION = 'autoslug.utils.translit_one'
+
+.. _translitcodec: http://pypi.python.org/pypi/translitcodec
+
 """
 
 # use custom slugifying function if any

@@ -23,8 +23,10 @@ setup(
 
     requires = ['python (>= 2.4)', 'django (>= 1.0)'],
     # in case you want to use slugify() with support for transliteration:
-    extras_require = {'cyrillic': 'pytils >= 0.2'},
-
+    extras_require = {
+        'cyrillic': 'pytils >= 0.2',
+        'translitcodec': 'translitcodec >= 0.3',
+    },
     description  = 'An automated slug field for Django.',
     long_description = readme,
     author       = 'Andy Mikhailenko',
