@@ -1,4 +1,13 @@
 # -*- coding: utf-8 -*-
+#
+#  Copyright (c) 2008—2012 Andy Mikhailenko
+#
+#  This file is part of django-autoslug.
+#
+#  django-autoslug is free software under terms of the GNU Lesser
+#  General Public License version 3 (LGPLv3) as published by the Free
+#  Software Foundation. See the file README for copying conditions.
+#
 
 # django
 from django.core.exceptions import ImproperlyConfigured
@@ -16,6 +25,7 @@ def get_prepopulated_value(field, instance):
         # AutoSlugField(populate_from='foo')
         attr = getattr(instance, field.populate_from)
         return callable(attr) and attr() or attr
+
 
 def generate_unique_slug(field, instance, slug, manager):
     """
@@ -59,6 +69,7 @@ def generate_unique_slug(field, instance, slug, manager):
         slug = '%(slug)s%(sep)s%(index)d' % data
 
         # ...next iteration...
+
 
 def get_uniqueness_lookups(field, instance, unique_with):
     """

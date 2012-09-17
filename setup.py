@@ -18,7 +18,7 @@ readme = open(os.path.join(os.path.dirname(__file__), 'README')).read()
 
 setup(
     name     = 'django-autoslug',
-    version  = '1.5.0',
+    version  = '1.6.0',  # also update doc/conf.py:version
     packages = ['autoslug'],
 
     requires = ['python (>= 2.4)', 'django (>= 1.0)'],
@@ -30,7 +30,7 @@ setup(
     description  = 'An automated slug field for Django.',
     long_description = readme,
     author       = 'Andy Mikhailenko',
-    author_email = 'andy@neithere.net',
+    author_email = 'neithere@gmail.com',
     url          = 'http://bitbucket.org/neithere/django-autoslug/',
     download_url = 'http://bitbucket.org/neithere/django-autoslug/get/tip.zip',
     license      = 'GNU Lesser General Public License (LGPL), Version 3',

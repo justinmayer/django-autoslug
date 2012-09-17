@@ -1,6 +1,6 @@
 Django AutoSlug was originally created by:
 
-* Andy Mikhailenko <andy@neithere.net>.
+* Andy Mikhailenko <neithere@gmail.com>.
 
 And here is a probably incomplete list of contributors -- people
 who have submitted patches, reported bugs, added translations and
@@ -14,4 +14,5 @@ generally made django-autoslug better:
 * Johan Charpentier
 * Nicolás Echániz
 * Aaron VanDerlip
+* Jannis Leidel
 * Your Name Here ;)

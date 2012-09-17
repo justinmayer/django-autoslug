@@ -3,14 +3,16 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Django Autoslug's documentation!
-===========================================
+:class:`~autoslug.fields.AutoSlugField` is an extended SlugField designed
+to automatically avoid duplicate values and apply custom "slugification"
+functions (including advanced transliteration).  It is possible to fine-tune
+the method for resolving clashes.
 
-Contents:
+See detailed documentation with real-world examples:
 
 .. toctree::
    :maxdepth: 2
-   
+
    fields
    settings
 
