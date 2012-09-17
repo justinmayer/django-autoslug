@@ -30,8 +30,8 @@ Django settings that affect django-autoslug:
   Default value is one of these depending on availability in given order:
 
   * `unidecode.unidecode()` if Unidecode_ is available;
-  * `pytils.translit.slugify` if pytils_ is available;
-  * `django.template.defaultfilters.slugify` bundled with Django.
+  * `pytils.translit.slugify()` if pytils_ is available;
+  * `django.template.defaultfilters.slugify()` bundled with Django.
 
   django-autoslug also ships a couple of slugify functions that use
   the translitcodec_ Python library, e.g.::
