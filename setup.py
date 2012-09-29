@@ -18,7 +18,7 @@ readme = open(os.path.join(os.path.dirname(__file__), 'README')).read()
 
 setup(
     name     = 'django-autoslug',
-    version  = '1.6.0',  # also update doc/conf.py:version
+    version  = '1.6.1',  # also update doc/conf.py:version
     packages = ['autoslug'],
 
     requires = ['python (>= 2.4)', 'django (>= 1.0)'],

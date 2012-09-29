@@ -237,5 +237,8 @@ class AutoSlugField(SlugField):
     def south_field_triple(self):
         "Returns a suitable description of this field for South."
         args, kwargs = introspector(self)
-        kwargs.update({'populate_from': 'None', 'unique_with': '()'})
+        kwargs.update({
+            'populate_from': 'None' if callable(self.populate_from) else repr(self.populate_from),
+            'unique_with': repr(self.unique_with)
+        })
         return ('autoslug.fields.AutoSlugField', args, kwargs)
