@@ -215,19 +215,25 @@ class AutoSlugField(SlugField):
 
         slug = self.slugify(value)
 
-        if not slug:
+        if not slug and not self.blank:
             # no incoming value,  use model name
             slug = instance._meta.module_name
 
-        assert slug, 'slug is defined before trying to ensure uniqueness'
+        if not self.blank:
+            assert slug, 'slug is defined before trying to ensure uniqueness'
 
-        slug = utils.crop_slug(self, slug)
+        if slug:
+            slug = utils.crop_slug(self, slug)
 
-        # ensure the slug is unique (if required)
-        if self.unique or self.unique_with:
-            slug = utils.generate_unique_slug(self, instance, slug, manager)
+            # ensure the slug is unique (if required)
+            if self.unique or self.unique_with:
+                slug = utils.generate_unique_slug(self, instance, slug, manager)
 
-        assert slug, 'value is filled before saving'
+            assert slug, 'value is filled before saving'
+
+        elif self.null:
+            # If the field is nullable
+            slug = None
 
         # make the updated slug available as instance attribute
         setattr(instance, self.name, slug)
