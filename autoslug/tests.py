@@ -190,6 +190,30 @@ class ModelWithCallable(Model):
     slug = AutoSlugField(populate_from=lambda instance: u'the %s' % instance.name)
 
 
+class ModelWithNullable(Model):
+    """
+    >>> a = ModelWithNullable.objects.create(name=None)
+    >>> a.slug is None
+    True
+    >>> a.slug == ''
+    False
+    """
+    name = CharField(max_length=200, blank=True, null=True)
+    slug = AutoSlugField(populate_from='name', blank=True, null=True)
+
+
+class ModelWithBlank(Model):
+    """
+    >>> a = ModelWithBlank.objects.create(name=None)
+    >>> a.slug is None
+    False
+    >>> a.slug == ''
+    True
+    """
+    name = CharField(max_length=200, blank=True, null=True)
+    slug = AutoSlugField(populate_from='name', blank=True)
+
+
 class ModelWithCallableAttr(Model):
     """
     >>> a = ModelWithCallableAttr.objects.create(name='albatross')
