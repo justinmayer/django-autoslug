@@ -8,6 +8,17 @@ a) populate itself from another field,
 b) preserve uniqueness of the value and
 c) use custom `slugify()` functions for better i18n.
 
+Requirements
+------------
+
+Obviously, a more or less recent version of Django.
+
+The following versions of Python are officially supported:
+*2.5, 2.6, 2.7, 3.3, PyPy*.
+
+It may be possible to successfully use django-autoslug in other environments
+but they are not tested.
+
 Examples
 --------
 
