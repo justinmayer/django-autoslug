@@ -9,9 +9,6 @@
 #  Software Foundation. See the file README for copying conditions.
 #
 
-# python
-from warnings import warn
-
 # django
 from django.db.models.fields import SlugField
 
@@ -23,12 +20,19 @@ except ImportError:
 
 # this app
 from autoslug.settings import slugify
-import utils
+from autoslug import utils
 
 
 __all__ = ['AutoSlugField']
 
 SLUG_INDEX_SEPARATOR = '-'    # the "-" in "foo-2"
+
+try:                 # pragma: nocover
+    # Python 2.x
+    basestring
+except NameError:    # pragma: nocover
+    # Python 3.x
+    basestring = str
 
 
 class AutoSlugField(SlugField):
@@ -177,12 +181,6 @@ class AutoSlugField(SlugField):
 
         self.index_sep = kwargs.pop('sep', SLUG_INDEX_SEPARATOR)
 
-        # backward compatibility
-        if kwargs.get('unique_with_date'):
-            warn('Using unique_with_date="foo" in AutoSlugField is deprecated, '
-                 'use unique_with=("foo",) instead.', DeprecationWarning)
-            self.unique_with += (kwargs['unique_with_date'],)
-
         if self.unique_with:
             # we will do "manual" granular check below
             kwargs['unique'] = False
@@ -209,9 +207,10 @@ class AutoSlugField(SlugField):
         if self.always_update or (self.populate_from and not value):
             value = utils.get_prepopulated_value(self, instance)
 
+            # pragma: nocover
             if __debug__ and not value and not self.blank:
-                print 'Failed to populate slug %s.%s from %s' % \
-                    (instance._meta.object_name, self.name, self.populate_from)
+                print('Failed to populate slug %s.%s from %s' % \
+                    (instance._meta.object_name, self.name, self.populate_from))
 
         if value:
             slug = self.slugify(value)

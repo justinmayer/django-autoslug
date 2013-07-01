@@ -6,6 +6,8 @@ egg-info
 ~$
 \.py[co]$
 ^coverage/
+^\.tox/
+^\.ropeproject/
 
 
 #eclipse files
