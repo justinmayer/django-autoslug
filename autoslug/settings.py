@@ -51,24 +51,8 @@ Django settings that affect django-autoslug:
 
 """
 from django.conf import settings
+from django.core.urlresolvers import get_callable
 
 # use custom slugifying function if any
-slugify = getattr(settings, 'AUTOSLUG_SLUGIFY_FUNCTION', None)
-
-if not slugify:
-    try:
-        # i18n-friendly approach
-        from unidecode import unidecode
-        slugify = lambda s: unidecode(s).replace(' ', '-')
-    except ImportError:
-        try:
-            # Cyrillic transliteration (primarily Russian)
-            from pytils.translit import slugify
-        except ImportError:
-            # fall back to Django's default method
-            slugify = 'django.template.defaultfilters.slugify'
-
-# find callable by string
-if isinstance(slugify, str):
-    from django.core.urlresolvers import get_callable
-    slugify = get_callable(slugify)
+slugify_function_path = getattr(settings, 'AUTOSLUG_SLUGIFY_FUNCTION', 'autoslug.utils.slugify')
+slugify = get_callable(slugify_function_path)

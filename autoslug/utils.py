@@ -12,6 +12,22 @@
 # django
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models.fields import FieldDoesNotExist, DateField
+from django.template.defaultfilters import slugify as django_slugify
+
+try:
+    # i18n-friendly approach
+    from unidecode import unidecode
+except ImportError:
+    try:
+        # Cyrillic transliteration (primarily Russian)
+        from pytils.translit import slugify
+    except ImportError:
+        # fall back to Django's default method
+        slugify = django_slugify
+else:
+    # Use Django's default method over decoded string
+    def slugify(value):
+        return django_slugify(unidecode(value))
 
 
 def get_prepopulated_value(field, instance):
