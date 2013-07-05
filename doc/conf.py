@@ -11,7 +11,7 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-VERSION = '1.6.1'
+VERSION = '1.7.1'
 
 import sys, os
 
