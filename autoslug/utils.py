@@ -58,7 +58,7 @@ def generate_unique_slug(field, instance, slug, manager):
     index = 1
 
     if not manager:
-        manager = type(instance).objects
+        manager = field.model._default_manager
 
 
     # keep changing the slug until it is unique
