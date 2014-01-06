@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# coding: utf-8
 #
 # Django Autoslug documentation build configuration file, created by
 # sphinx-quickstart on Tue Jul 21 22:35:51 2009.
