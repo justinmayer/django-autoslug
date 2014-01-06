@@ -1,7 +1,7 @@
 django-autoslug
 ===============
 
-Django-autoslug is a reusable Django application that provides an improved
+Django-autoslug is a reusable Django library that provides an improved
 slug field which can automatically:
 
 a) populate itself from another field,
