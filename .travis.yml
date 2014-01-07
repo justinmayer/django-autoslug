@@ -2,13 +2,11 @@ language: python
 python:
   - '2.6'
   - '2.7'
-  - '3.2'
-  - '3.3'
 install:
   - 'pip install -r requirements/basic.txt'
   - 'pip install -r requirements/devel.txt'
   - 'pip install -r requirements/l10n.txt'
-script: ./run_tests
+script: python run_tests.py
 notifications:
   email:
     - neithere+travis@gmail.com
