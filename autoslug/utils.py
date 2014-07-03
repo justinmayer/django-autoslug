@@ -11,6 +11,7 @@
 
 # django
 from django.core.exceptions import ImproperlyConfigured
+from django.db.models import ForeignKey
 from django.db.models.fields import FieldDoesNotExist, DateField
 from django.template.defaultfilters import slugify as django_slugify
 
@@ -113,6 +114,10 @@ def get_uniqueness_lookups(field, instance, unique_with):
         value = getattr(instance, field_name)
         if not value:
             if other_field.blank:
+                field_object, model, direct, m2m = instance._meta.get_field_by_name(field_name)
+                if isinstance(field_object, ForeignKey):
+                    lookup = '%s__isnull' % field_name
+                    yield lookup, True
                 break
             raise ValueError('Could not check uniqueness of %s.%s with'
                              ' respect to %s.%s because the latter is empty.'
