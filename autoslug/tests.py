@@ -371,3 +371,21 @@ class ModelWithSlugSpaceShared(SharedSlugSpace):
     >>> b.slug
     u'my-name-2'
     """
+
+
+class ModelWithUniqueSlugFKNull(Model):
+    """
+    >>> sm1 = SimpleModel.objects.create(name='test')
+    >>> a = ModelWithUniqueSlugFKNull.objects.create(name='test', simple_model=sm1)
+    >>> a.slug
+    u'test'
+    >>> b = ModelWithUniqueSlugFKNull.objects.create(name='test')
+    >>> b.slug
+    u'test'
+    >>> c = ModelWithUniqueSlugFKNull.objects.create(name='test', simple_model=sm1)
+    >>> c.slug
+    u'test-2'
+    """
+    name = CharField(max_length=200)
+    simple_model = ForeignKey(SimpleModel, null=True, blank=True, default=None)
+    slug = AutoSlugField(populate_from='name', unique_with='simple_model')

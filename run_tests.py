@@ -22,6 +22,8 @@ if sys.version < '3.0':
     conf['INSTALLED_APPS'].append('django_coverage')
     conf.update(COVERAGE_REPORT_HTML_OUTPUT_DIR = os.path.join('.', 'coverage'))
     test_command = 'test_coverage'
+    # to work with django >= 1.6
+    conf.update(TEST_RUNNER = 'django.test.simple.DjangoTestSuiteRunner')
 else:
     test_command = 'test'
 
