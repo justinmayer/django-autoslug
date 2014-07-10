@@ -375,6 +375,8 @@ class ModelWithSlugSpaceShared(SharedSlugSpace):
 
 class ModelWithUniqueSlugFKNull(Model):
     """
+    See issue #13.
+
     >>> sm1 = SimpleModel.objects.create(name='test')
     >>> a = ModelWithUniqueSlugFKNull.objects.create(name='test', simple_model=sm1)
     >>> a.slug
