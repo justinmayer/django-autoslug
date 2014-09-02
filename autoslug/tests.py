@@ -187,7 +187,7 @@ class ModelWithCallable(Model):
     u'the-larch'
     """
     name = CharField(max_length=200)
-    slug = AutoSlugField(populate_from=lambda instance: u'the %s' % instance.name)
+    slug = AutoSlugField(populate_from=lambda instance: 'the %s' % instance.name)
 
 
 class ModelWithNullable(Model):
@@ -224,7 +224,7 @@ class ModelWithCallableAttr(Model):
     slug = AutoSlugField(populate_from='get_name')
 
     def get_name(self):
-        return u'spam, %s and spam' % self.name
+        return 'spam, %s and spam' % self.name
 
 
 class ModelWithCustomPrimaryKey(Model):

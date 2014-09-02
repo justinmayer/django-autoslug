@@ -176,7 +176,7 @@ else:
     PUNCT_RE = re.compile(r'[\t !"#$%&\'()*\-/<=>?@\[\\\]^_`{|},.]+')
 
     def translitcodec_slugify(codec):
-        def _slugify(value, delim=u'-', encoding=''):
+        def _slugify(value, delim='-', encoding=''):
             """
             Generates an ASCII-only slug.
 

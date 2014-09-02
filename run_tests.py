@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 # coding: utf-8
+"""
+Test runner script.  Please do not run it manually.  Use `tox`.
+"""
 import os
 import sys
 from django.conf import settings
