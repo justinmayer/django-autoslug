@@ -196,6 +196,37 @@ class AutoSlugField(SlugField):
         self.always_update = kwargs.pop('always_update', False)
         super(SlugField, self).__init__(*args, **kwargs)
 
+    def deconstruct(self):
+        name, path, args, kwargs = super(AutoSlugField, self).deconstruct()
+
+        if self.max_length != 50:
+            kwargs.pop('max_length')
+
+        if self.populate_from is not None:
+            kwargs['populate_from'] = self.populate_from
+            if self.editable is not False:
+                kwargs['editable'] = self.editable
+
+        if self.unique_with != ():
+            kwargs['unique_with'] = self.unique_with
+            kwargs.pop('unique', None)
+
+        if self.slugify != slugify:
+            kwargs['slugify'] = self.slugify
+
+        if self.index_sep != SLUG_INDEX_SEPARATOR:
+            kwargs['sep'] = self.index_sep
+
+        kwargs.pop('db_index', None)
+
+        if self.manager is not None:
+            kwargs['manager'] = self.manager
+
+        if self.always_update:
+            kwargs['always_update'] = self.always_update
+
+        return name, path, args, kwargs
+
     def pre_save(self, instance, add):
 
         # get currently entered slug
