@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 #
-#  Copyright (c) 2008—2014 Andy Mikhailenko and contributors
+#  Copyright (c) 2008—2015 Andy Mikhailenko and contributors
 #
 #  This file is part of django-autoslug.
 #
@@ -18,10 +18,10 @@ readme = open(os.path.join(os.path.dirname(__file__), 'README')).read()
 
 setup(
     name     = 'django-autoslug',
-    version  = '1.7.2',  # also update doc/conf.py:version
+    version  = '1.8.0',  # also update doc/conf.py:version
     packages = ['autoslug'],
 
-    requires = ['python (>= 2.5)', 'django (>= 1.0)'],
+    requires = ['python (>= 2.7)', 'django (>= 1.0)'],
     # in case you want to use slugify() with support for transliteration:
     extras_require = {
         'cyrillic': 'pytils >= 0.2',

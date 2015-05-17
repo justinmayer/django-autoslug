@@ -14,7 +14,7 @@ Requirements
 Obviously, a more or less recent version of Django.
 
 The following versions of Python are officially supported:
-*2.6, 2.7, 3.2, 3.4, PyPy*.
+*2.7, 3.2, 3.4, PyPy*.
 
 It may be possible to successfully use django-autoslug in other environments
 but they are not tested.
