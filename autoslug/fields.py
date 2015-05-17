@@ -249,7 +249,7 @@ class AutoSlugField(SlugField):
             slug = None
 
             if not self.blank:
-                slug = instance._meta.module_name
+                slug = instance._meta.model_name
             elif not self.null:
                 slug = ''
 
