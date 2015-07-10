@@ -206,8 +206,8 @@ class AutoSlugField(SlugField):
     def deconstruct(self):
         name, path, args, kwargs = super(AutoSlugField, self).deconstruct()
 
-        if self.max_length != 50:
-            kwargs.pop('max_length')
+        if self.max_length == 50:
+            kwargs.pop('max_length', None)
 
         if self.populate_from is not None:
             kwargs['populate_from'] = self.populate_from
