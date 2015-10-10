@@ -1,3 +1,16 @@
+Changelog
+
+Version 1.8.1
+=============
+
+Bugs fixed:
+
+- #25: max_length ignored in django 1.7 migrations
+- #42: added setting to enable/disable modeltranslation support
+
+Old versions
+============
+
 Changelog before extracting to a separate repository:
 
 changeset:   23:34210c5b5b72

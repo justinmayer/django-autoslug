@@ -279,41 +279,10 @@ class AutoSlugField(SlugField):
         if 'modeltranslation' in settings.INSTALLED_APPS \
                 and not hasattr(self.populate_from, '__call__') \
                 and autoslug_modeltranslation_enable:
-            post_save.connect(self.modeltranslation_update_slugs, sender=type(instance))
+            post_save.connect(modeltranslation_update_slugs, sender=type(instance))
 
         return slug
 
-    @staticmethod
-    def modeltranslation_update_slugs(sender, **kwargs):
-        # https://bitbucket.org/neithere/django-autoslug/pull-request/11/modeltranslation-support-fix-issue-19/
-        # http://django-modeltranslation.readthedocs.org
-        #
-        # TODO: tests
-        #
-        if not modeltranslation_utils:
-            return
-
-        instance = kwargs['instance']
-        slugs = {}
-
-        for field in instance._meta.fields:
-            if type(field) == AutoSlugField:
-                for lang in settings.LANGUAGES:
-                    lang_code = lang[0]
-                    lang_code = lang_code.replace('-', '_')
-
-                    populate_from_localized = modeltranslation_utils.build_localized_fieldname(field.populate_from,
-                                                                                               lang_code)
-                    populate_from_value = getattr(instance, populate_from_localized)
-
-                    field_name_localized = modeltranslation_utils.build_localized_fieldname(field.name, lang_code)
-                    field_value = getattr(instance, field_name_localized)
-
-                    if not field_value or field.always_update:
-                        slug = field.slugify(populate_from_value)
-                        slugs[field_name_localized] = slug
-
-        sender.objects.filter(pk=instance.pk).update(**slugs)
 
     def south_field_triple(self):
         "Returns a suitable description of this field for South."
@@ -323,3 +292,36 @@ class AutoSlugField(SlugField):
             'unique_with': repr(self.unique_with)
         })
         return ('autoslug.fields.AutoSlugField', args, kwargs)
+
+
+def modeltranslation_update_slugs(sender, **kwargs):
+    # https://bitbucket.org/neithere/django-autoslug/pull-request/11/modeltranslation-support-fix-issue-19/
+    # http://django-modeltranslation.readthedocs.org
+    #
+    # TODO: tests
+    #
+    if not modeltranslation_utils:
+        return
+
+    instance = kwargs['instance']
+    slugs = {}
+
+    for field in instance._meta.fields:
+        if type(field) != AutoSlugField:
+            continue
+        for lang in settings.LANGUAGES:
+            lang_code = lang[0]
+            lang_code = lang_code.replace('-', '_')
+
+            populate_from_localized = modeltranslation_utils.build_localized_fieldname(field.populate_from,
+                                                                                       lang_code)
+            populate_from_value = getattr(instance, populate_from_localized)
+
+            field_name_localized = modeltranslation_utils.build_localized_fieldname(field.name, lang_code)
+            field_value = getattr(instance, field_name_localized)
+
+            if not field_value or field.always_update:
+                slug = field.slugify(populate_from_value)
+                slugs[field_name_localized] = slug
+
+    sender.objects.filter(pk=instance.pk).update(**slugs)

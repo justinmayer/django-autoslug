@@ -49,11 +49,11 @@ Django settings that affect django-autoslug:
 .. _pytils: http://pypi.python.org/pypi/pytils
 .. _translitcodec: http://pypi.python.org/pypi/translitcodec
 
-  `AUTOSLUG_MODELTRANSLATION_ENABLE`
-    If you don't need modeltranslation support, but it's already installed, set
-    to `False` in settings of your project.
+`AUTOSLUG_MODELTRANSLATION_ENABLE`
+  If modeltranslation_ is installed but you do not wish to use it for
+  autoslugs, set this to `False` in your project settings.  Default is `True`.
 
-    Default value is `True`
+.. _modeltranslation: http://django-modeltranslation.readthedocs.org
 
 """
 from django.conf import settings
@@ -62,5 +62,6 @@ from django.core.urlresolvers import get_callable
 # use custom slugifying function if any
 slugify_function_path = getattr(settings, 'AUTOSLUG_SLUGIFY_FUNCTION', 'autoslug.utils.slugify')
 slugify = get_callable(slugify_function_path)
-# Setting to enable/disable modeltranslation support
+
+# enable/disable modeltranslation support
 autoslug_modeltranslation_enable = getattr(settings, 'AUTOSLUG_MODELTRANSLATION_ENABLE', True)
