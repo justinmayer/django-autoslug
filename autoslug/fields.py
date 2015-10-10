@@ -26,18 +26,17 @@ except ImportError:
     modeltranslation_utils = None
 
 # this app
-from autoslug.settings import slugify
+from autoslug.settings import slugify, autoslug_modeltranslation_enable
 from autoslug import utils
-
 
 __all__ = ['AutoSlugField']
 
-SLUG_INDEX_SEPARATOR = '-'    # the "-" in "foo-2"
+SLUG_INDEX_SEPARATOR = '-'  # the "-" in "foo-2"
 
-try:                 # pragma: nocover
+try:  # pragma: nocover
     # Python 2.x
     basestring
-except NameError:    # pragma: nocover
+except NameError:  # pragma: nocover
     # Python 3.x
     basestring = str
 
@@ -170,6 +169,7 @@ class AutoSlugField(SlugField):
             return default_slugify(value).replace('-', '_')
         slug = AutoSlugField(slugify=custom_slugify)
     """
+
     def __init__(self, *args, **kwargs):
         kwargs['max_length'] = kwargs.get('max_length', 50)
 
@@ -248,7 +248,7 @@ class AutoSlugField(SlugField):
             # pragma: nocover
             if __debug__ and not value and not self.blank:
                 print('Failed to populate slug %s.%s from %s' % \
-                    (instance._meta.object_name, self.name, self.populate_from))
+                      (instance._meta.object_name, self.name, self.populate_from))
 
         if value:
             slug = self.slugify(value)
@@ -276,8 +276,10 @@ class AutoSlugField(SlugField):
         setattr(instance, self.name, slug)
 
         # modeltranslation support
-        if 'modeltranslation' in settings.INSTALLED_APPS and not hasattr(self.populate_from, '__call__'):
-            post_save.connect( self.modeltranslation_update_slugs, sender = type(instance) )
+        if 'modeltranslation' in settings.INSTALLED_APPS \
+                and not hasattr(self.populate_from, '__call__') \
+                and autoslug_modeltranslation_enable:
+            post_save.connect(self.modeltranslation_update_slugs, sender=type(instance))
 
         return slug
 
@@ -300,7 +302,8 @@ class AutoSlugField(SlugField):
                     lang_code = lang[0]
                     lang_code = lang_code.replace('-', '_')
 
-                    populate_from_localized = modeltranslation_utils.build_localized_fieldname(field.populate_from, lang_code)
+                    populate_from_localized = modeltranslation_utils.build_localized_fieldname(field.populate_from,
+                                                                                               lang_code)
                     populate_from_value = getattr(instance, populate_from_localized)
 
                     field_name_localized = modeltranslation_utils.build_localized_fieldname(field.name, lang_code)
