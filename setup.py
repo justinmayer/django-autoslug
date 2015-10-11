@@ -18,10 +18,10 @@ readme = open(os.path.join(os.path.dirname(__file__), 'README')).read()
 
 setup(
     name     = 'django-autoslug',
-    version  = '1.8.0',  # also update doc/conf.py:version
+    version  = '1.9.0',  # also update doc/conf.py:version
     packages = ['autoslug'],
 
-    requires = ['python (>= 2.7)', 'django (>= 1.0)'],
+    requires = ['python (>= 2.7)', 'django (>= 1.7.10)'],
     # in case you want to use slugify() with support for transliteration:
     extras_require = {
         'cyrillic': 'pytils >= 0.2',

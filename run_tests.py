@@ -1,13 +1,13 @@
 #!/usr/bin/env python
-# coding: utf-8
 """
-Test runner script.  Please do not run it manually.  Use `tox`.
+Test runner script.
+
+Please use `tox` to run it in multiple environments.
 """
-import os
-import sys
+
+import django
 from django.conf import settings
 from django.core.management import call_command
-
 
 
 conf = dict(
@@ -20,20 +20,9 @@ conf = dict(
     AUTOSLUG_SLUGIFY_FUNCTION = 'django.template.defaultfilters.slugify',
 )
 
-# to work with django >= 1.6
-conf.update(TEST_RUNNER = 'django.test.simple.DjangoTestSuiteRunner')
-
-# django-coverage does not support Python 3 yet
-if sys.version < '3.0':
-    conf['INSTALLED_APPS'].append('django_coverage')
-    conf.update(COVERAGE_REPORT_HTML_OUTPUT_DIR = os.path.join('.', 'coverage'))
-    test_command = 'test_coverage'
-else:
-    test_command = 'test'
-
 
 settings.configure(**conf)
-
+django.setup()
 
 if __name__ == "__main__":
-    call_command(test_command, 'autoslug')
+    call_command('test', 'autoslug')

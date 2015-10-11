@@ -11,10 +11,9 @@ c) use custom `slugify()` functions for better i18n.
 Requirements
 ------------
 
-Obviously, a more or less recent version of Django.
+*Python 2.7, 3.5 or PyPy*.
 
-The following versions of Python are officially supported:
-*2.7, 3.2, 3.4, PyPy*.
+*Django 1.7.10* or higher.
 
 It may be possible to successfully use django-autoslug in other environments
 but they are not tested.
