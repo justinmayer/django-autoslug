@@ -16,6 +16,7 @@ conf = dict(
         ('ru', gettext('Russian')),
         ('en', gettext('English')),
     ),
+    USE_TZ = False,
     INSTALLED_APPS = [
         'modeltranslation',
         'autoslug'

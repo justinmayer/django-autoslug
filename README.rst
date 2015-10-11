@@ -18,6 +18,11 @@ Requirements
 It may be possible to successfully use django-autoslug in other environments
 but they are not tested.
 
+.. note::
+
+  PyPy3 is not officially supported only because there were some problems with
+  permissions and `__pycache__` on CI unrelated to django-autoslug itself.
+
 Examples
 --------
 

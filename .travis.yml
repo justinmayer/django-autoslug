@@ -3,7 +3,7 @@ python:
   - '2.7'
   - '3.5'
   - 'pypy'
-  - 'pypy3'
+#  - 'pypy3'
 install:
   - 'pip install -r requirements/testing.txt'
 script: python run_tests.py
