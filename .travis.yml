@@ -1,12 +1,16 @@
 language: python
 python:
-  - '2.7'
-  - '3.5'
-  - 'pypy'
-#  - 'pypy3'
+  - 2.7
+  - 3.5
+  - pypy
+#  - pypy3
 install:
-  - 'pip install -r requirements/testing.txt'
-script: python run_tests.py
+  - pip install -r requirements/testing.txt
+  - pip install coveralls
+script:
+  coverage run --source=autoslug run_tests.py
+after_success:
+  coveralls
 notifications:
   email:
     - neithere+travis@gmail.com
