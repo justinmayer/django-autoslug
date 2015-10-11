@@ -5,9 +5,7 @@ python:
   - 'pypy'
   - 'pypy3'
 install:
-  - 'pip install -r requirements/basic.txt'
-  - 'pip install -r requirements/devel.txt'
-  - 'pip install -r requirements/l10n.txt'
+  - 'pip install -r requirements/testing.txt'
 script: python run_tests.py
 notifications:
   email:
