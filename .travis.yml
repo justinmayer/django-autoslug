@@ -12,4 +12,3 @@ script: python run_tests.py
 notifications:
   email:
     - neithere+travis@gmail.com
-
