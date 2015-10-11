@@ -1,3 +1,6 @@
+Authors
+~~~~~~~
+
 The django-autoslug library was originally created by:
 
 * Andy Mikhailenko <neithere@gmail.com>.

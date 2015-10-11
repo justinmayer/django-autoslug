@@ -1,5 +1,10 @@
-Development Workflow
-====================
+Contributing Guidelines
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Thank you for your interest in django-autoslug.
+
+If you wish to contribute a bugfix, please follow this workflow to ensure that
+your contribution is reviewed and accepted ASAP.
 
 0. The repository and issue tracker are here:
    https://github.com/neithere/django-autoslug.

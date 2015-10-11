@@ -1,5 +1,5 @@
 django-autoslug
-===============
+~~~~~~~~~~~~~~~
 
 Django-autoslug is a reusable Django library that provides an improved
 slug field which can automatically:
@@ -59,11 +59,11 @@ Community
 ---------
 
 This application was initially created by Andy Mikhailenko and then improved
-by other developers. They are listed in `AUTHORS`.
+by other developers. They are listed in `AUTHORS.rst`.
 
 Please feel free to file issues and/or submit patches.
 
-See `CONTRIBUTING` for hints related to the preferred workflow.
+See `CONTRIBUTING.rst` for hints related to the preferred workflow.
 
 Licensing
 ---------
