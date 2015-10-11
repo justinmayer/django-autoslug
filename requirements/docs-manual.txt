@@ -1,0 +1,7 @@
+-r basic.txt
+-r devel.txt
+
+Sphinx==1.1.2
+Sphinx-PyPI-upload==0.2.1
+docutils>=0.7
+Pygments>=1.2
