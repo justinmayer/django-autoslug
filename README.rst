@@ -82,9 +82,8 @@ More complex example:
 Documentation
 -------------
 
-See complete `HTML documentation <http://packages.python.org/django-autoslug/>`_
-for details. Sometimes it may get slightly outdated. You can always have the
-latest snapsnot by building it from the source (using Sphinx).
+See the `complete documentation <http://django-autoslug.readthedocs.org>`_
+on ReadTheDocs.  It is built automatically for the latest version.
 
 Community
 ---------
