@@ -18,7 +18,7 @@ import sys, os
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 sys.path.insert(0, os.path.abspath('..'))
 
-from autoslug import __version__ as VERSION
+from _version_helper import __version__ as VERSION
 
 from django.conf import settings
 settings.configure()
