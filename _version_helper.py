@@ -1,4 +1,6 @@
+import inspect
 import io
+import os
 
 
 __all__ = ['__version__']
@@ -16,7 +18,9 @@ __all__ = ['__version__']
 # 3) installing django-autoslug before Django itself (highly unlikely).
 #
 __version__ = None
-with io.open('autoslug/__init__.py', encoding='utf8') as f:
+thisfile = inspect.getfile(inspect.currentframe())
+path = os.path.join(os.path.abspath(os.path.dirname(thisfile)), 'autoslug/__init__.py')
+with io.open(path, encoding='utf8') as f:
     for line in f:
         if line.startswith('__version__'):
             exec(line)
