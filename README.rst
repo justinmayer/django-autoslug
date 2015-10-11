@@ -32,6 +32,8 @@ a) populate itself from another field,
 b) preserve uniqueness of the value and
 c) use custom `slugify()` functions for better i18n.
 
+The field is highly configurable.
+
 Requirements
 ------------
 
