@@ -35,8 +35,8 @@ setup(
     long_description = readme,
     author       = 'Andy Mikhailenko',
     author_email = 'neithere@gmail.com',
-    url          = 'http://bitbucket.org/neithere/django-autoslug/',
-    download_url = 'http://bitbucket.org/neithere/django-autoslug/get/tip.zip',
+    url          = 'https://github.com/neithere/django-autoslug/',
+    download_url = 'https://github.com/neithere/django-autoslug/archive/master.zip',
     license      = 'GNU Lesser General Public License (LGPL), Version 3',
     keywords     = 'django field slug auto unique transliteration i18n',
     classifiers  = [
