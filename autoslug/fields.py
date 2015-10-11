@@ -309,15 +309,23 @@ def modeltranslation_update_slugs(sender, **kwargs):
     for field in instance._meta.fields:
         if type(field) != AutoSlugField:
             continue
+        if not field.populate_from:
+            continue
         for lang in settings.LANGUAGES:
-            lang_code = lang[0]
+            lang_code, _ = lang
             lang_code = lang_code.replace('-', '_')
 
-            populate_from_localized = modeltranslation_utils.build_localized_fieldname(field.populate_from,
-                                                                                       lang_code)
-            populate_from_value = getattr(instance, populate_from_localized)
-
+            populate_from_localized = modeltranslation_utils.build_localized_fieldname(field.populate_from, lang_code)
             field_name_localized = modeltranslation_utils.build_localized_fieldname(field.name, lang_code)
+
+            # The source field or the slug field itself may not be registered
+            # with translator
+            if not hasattr(instance, populate_from_localized):
+                continue
+            if not hasattr(instance, field_name_localized):
+                continue
+
+            populate_from_value = getattr(instance, populate_from_localized)
             field_value = getattr(instance, field_name_localized)
 
             if not field_value or field.always_update:

@@ -10,11 +10,20 @@ from django.conf import settings
 from django.core.management import call_command
 
 
+gettext = lambda s: s
 conf = dict(
-    INSTALLED_APPS = ['autoslug'],
+    LANGUAGES = (
+        ('ru', gettext('Russian')),
+        ('en', gettext('English')),
+    ),
+    INSTALLED_APPS = [
+        'modeltranslation',
+        'autoslug'
+    ],
     DATABASES = dict(
         default = dict(
             ENGINE='django.db.backends.sqlite3',
+            NAME=':memory:',
         ),
     ),
     AUTOSLUG_SLUGIFY_FUNCTION = 'django.template.defaultfilters.slugify',

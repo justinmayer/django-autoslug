@@ -1,9 +1,13 @@
 Changelog
 
-Version 1.8.1
+Version 1.9.0
 =============
 
-Changed supported versions of Python (2.7/3.5/PyPy) and Django (1.7.10+).
+Backwards incompatible changes:
+
+- limited supported versions of Python to 2.7, 3.5 and PyPy.
+- limited supported Django versions to 1.7.10 and higher.
+- turned off modeltranslation support by default (can be enabled)
 
 Converted the test suite from doctest to unittest.
 
