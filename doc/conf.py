@@ -11,14 +11,14 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-VERSION = '1.9.0'
-
 import sys, os
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 sys.path.insert(0, os.path.abspath('..'))
+
+from autoslug import __version__ as VERSION
 
 from django.conf import settings
 settings.configure()
