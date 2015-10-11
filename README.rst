@@ -21,7 +21,9 @@ but they are not tested.
 Examples
 --------
 
-A simple example::
+A simple example:
+
+.. code-block:: python
 
     from django.db.models import CharField, Model
     from autoslug import AutoSlugField
@@ -30,7 +32,9 @@ A simple example::
         title = CharField(max_length=200)
         slug = AutoSlugField(populate_from='title')
 
-More complex example::
+More complex example:
+
+.. code-block:: python
 
     from django.db.models import CharField, DateField, ForeignKey, Model
     from django.contrib.auth.models import User

@@ -93,7 +93,9 @@ class AutoSlugField(SlugField):
         `unique_with`). The reasoning is that autosaved dates and other such
         fields must be already processed before using them in the AutoSlugField.
 
-    Example usage::
+    Example usage:
+
+    .. code-block:: python
 
         from django.db import models
         from autoslug import AutoSlugField
@@ -108,7 +110,9 @@ class AutoSlugField(SlugField):
             slug = AutoSlugField(populate_from='title', unique_with='pub_date__month')
 
 
-    More options::
+    More options:
+
+    .. code-block:: python
 
         # slugify but allow non-unique slugs
         slug = AutoSlugField()
@@ -168,8 +172,8 @@ class AutoSlugField(SlugField):
         def custom_slugify(value):
             return default_slugify(value).replace('-', '_')
         slug = AutoSlugField(slugify=custom_slugify)
-    """
 
+    """
     def __init__(self, *args, **kwargs):
         kwargs['max_length'] = kwargs.get('max_length', 50)
 
