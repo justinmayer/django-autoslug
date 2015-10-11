@@ -1,2 +1,0 @@
-pytils>=0.2
-Unidecode>=0.04

@@ -1,0 +1,5 @@
+django-modeltranslation>=0.10
+
+# l10n
+pytils>=0.2
+Unidecode>=0.04
