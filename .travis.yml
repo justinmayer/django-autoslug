@@ -4,6 +4,7 @@ python:
   - 3.5
   - pypy
 #  - pypy3
+sudo: false
 install:
   - pip install -r requirements/testing.txt
   - pip install coveralls

@@ -28,4 +28,5 @@ generally made django-autoslug better:
 * Thomas Schreiber
 * Mike Urbanski
 * Vadim Iskuchekov
+* kane-c
 * Your Name Here ;)

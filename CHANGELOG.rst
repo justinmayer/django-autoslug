@@ -1,21 +1,31 @@
 Changelog
 ~~~~~~~~~
 
+Version 1.9.1
+-------------
+
+Bugs fixed:
+
+- #43 — Packaging error
+
 Version 1.9.0
 -------------
 
 Backwards incompatible changes:
 
-- limited supported versions of Python to 2.7, 3.5 and PyPy.
-- limited supported Django versions to 1.7.10 and higher.
-- turned off modeltranslation support by default (can be enabled)
-
-Converted the test suite from doctest to unittest.
+- Limited supported versions of Python to 2.7, 3.5 and PyPy.
+- Limited supported Django versions to 1.7.10 and higher.
+- Turned off modeltranslation support by default (can be enabled)
 
 Bugs fixed:
 
-- #25: max_length ignored in django 1.7 migrations
-- #42: added setting to enable/disable modeltranslation support
+- #25 — max_length ignored in django 1.7 migrations.
+- #42 — Added setting to enable/disable modeltranslation support.
+
+Other changes:
+
+- Converted the test suite from doctest to unittest.
+- The project has moved from Bitbucket to GitHub.
 
 Old versions
 ------------
