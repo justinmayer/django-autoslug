@@ -1,2 +1,0 @@
--r requirements/basic.txt
--r requirements/devel.txt
