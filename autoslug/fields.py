@@ -200,6 +200,10 @@ class AutoSlugField(SlugField):
         if 'db_index' not in kwargs:
             kwargs['db_index'] = True
 
+        # A boolean instructing the field to accept Unicode letters in
+        # addition to ASCII letters. Defaults to False.
+        self.allow_unicode = kwargs.pop('allow_unicode', False)
+
         # When using model inheritence, set manager to search for matching
         # slug values
         self.manager = kwargs.pop('manager', None)
