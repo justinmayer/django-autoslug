@@ -1,6 +1,12 @@
 Changelog
 ~~~~~~~~~
 
+Version 1.9.3
+-------------
+
+- Add allow_unicode attribute for django 1.9 compatibility.
+- Tweak packaging
+
 Version 1.9.1, 1.9.2
 --------------------
 
