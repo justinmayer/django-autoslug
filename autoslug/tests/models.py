@@ -1,4 +1,4 @@
-from django.db.models import Model, CharField, DateField, ForeignKey, Manager
+from django.db.models import Model, CharField, DateField, BooleanField, ForeignKey, Manager
 
 
 # this app
@@ -27,7 +27,7 @@ class ModelWithUniqueSlugDate(Model):
     slug = AutoSlugField(unique_with='date')
 
 
-class ModelWithUniqueSlugDay(Model):    # same as ...Date, just more explicit
+class ModelWithUniqueSlugDay(Model):  # same as ...Date, just more explicit
     date = DateField()
     slug = AutoSlugField(unique_with='date__day')
 
@@ -82,6 +82,8 @@ class ModelWithCustomPrimaryKey(Model):
 
 
 custom_slugify = lambda value: default_slugify(value).replace('-', '_')
+
+
 class ModelWithCustomSlugifier(Model):
     slug = AutoSlugField(unique=True, slugify=custom_slugify)
 
@@ -144,3 +146,27 @@ class ModeltranslationOne(Model):
     title = CharField(max_length=255)
     description = CharField(max_length=255)
     slug = AutoSlugField(populate_from='title', always_update=True, unique=True)
+
+
+class NonDeletedObjects(Manager):
+    def get_queryset(self):
+        return super(NonDeletedObjects, self).get_queryset().filter(is_deleted=False)
+
+
+class AbstractModelWithCustomManager(Model):
+    is_deleted = BooleanField(default=False)
+
+    objects = NonDeletedObjects()
+    all_objects = Manager()
+
+    class Meta:
+        abstract = True
+
+    def delete(self, using=None):
+        self.is_deleted = True
+        self.save()
+
+
+class NonDeletableModelWithUniqueSlug(AbstractModelWithCustomManager):
+    name = CharField(max_length=200)
+    slug = AutoSlugField(populate_from='name', unique=True, manager_name='all_objects')

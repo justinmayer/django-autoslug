@@ -234,6 +234,13 @@ class AutoSlugFieldTestCase(TestCase):
         b.save()
         assert b.slug == u'my-name-2'
 
+    def test_autoslug_with_manager_name(self):
+        a = NonDeletableModelWithUniqueSlug.objects.create(name='My name')
+        self.assertEqual(a.slug, u'my-name')
+        a.delete()
+        b = NonDeletableModelWithUniqueSlug.objects.create(name='My name')
+        self.assertEqual(b.slug, u'my-name-2')
+
 
 class AutoSlugModelTranslationTestCase(TestCase):
 
