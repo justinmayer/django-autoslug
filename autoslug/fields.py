@@ -207,6 +207,7 @@ class AutoSlugField(SlugField):
         # When using model inheritence, set manager to search for matching
         # slug values
         self.manager = kwargs.pop('manager', None)
+        self.manager_name = kwargs.pop('manager_name', None)
 
         self.always_update = kwargs.pop('always_update', False)
         super(SlugField, self).__init__(*args, **kwargs)
@@ -237,6 +238,9 @@ class AutoSlugField(SlugField):
         if self.manager is not None:
             kwargs['manager'] = self.manager
 
+        if self.manager_name is not None:
+            kwargs['manager_name'] = self.manager_name
+
         if self.always_update:
             kwargs['always_update'] = self.always_update
 
@@ -247,7 +251,12 @@ class AutoSlugField(SlugField):
         # get currently entered slug
         value = self.value_from_object(instance)
 
-        manager = self.manager
+        if self.manager is not None:
+            manager = self.manager
+        elif self.manager_name is not None:
+            manager = getattr(self.model, self.manager_name)
+        else:
+            manager = None
 
         # autopopulate
         if self.always_update or (self.populate_from and not value):
