@@ -30,5 +30,5 @@ generally made django-autoslug better:
 * Vadim Iskuchekov
 * kane-c
 * Julien Dubiel
-* trollknurr
+* Tony Shtarev
 * Your Name Here ;)
