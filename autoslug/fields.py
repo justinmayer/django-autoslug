@@ -132,11 +132,11 @@ class AutoSlugField(SlugField):
         # ensure that slug is unique with given date AND category
         slug = AutoSlugField(unique_with=('pub_date','category'))
 
-        # ensure that slug in unique with an external object
+        # ensure that slug is unique with an external object
         # assuming that author=ForeignKey(Author)
         slug = AutoSlugField(unique_with='author')
 
-        # ensure that slug in unique with a subset of external objects (by lookups)
+        # ensure that slug is unique with a subset of external objects (by lookups)
         # assuming that author=ForeignKey(Author)
         slug = AutoSlugField(unique_with='author__name')
 
