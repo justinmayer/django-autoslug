@@ -244,6 +244,9 @@ class AutoSlugField(SlugField):
         if self.always_update:
             kwargs['always_update'] = self.always_update
 
+        if 'manager' in kwargs:
+            del kwargs['manager']
+
         return name, path, args, kwargs
 
     def pre_save(self, instance, add):
