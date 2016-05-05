@@ -241,6 +241,12 @@ class AutoSlugFieldTestCase(TestCase):
         b = NonDeletableModelWithUniqueSlug.objects.create(name='My name')
         self.assertEqual(b.slug, u'my-name-2')
 
+    def test_deconstruct_with_manager(self):
+        a = SharedSlugSpace(name='TestName')
+        a.save()
+        _, _, _, kwargs = a._meta.get_field('slug').deconstruct()
+        self.assertNotIn('manager', kwargs)
+
 
 class AutoSlugModelTranslationTestCase(TestCase):
 
