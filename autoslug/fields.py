@@ -1,6 +1,6 @@
 # coding: utf-8
 #
-#  Copyright (c) 2008—2015 Andy Mikhailenko
+#  Copyright (c) 2008—2016 Andy Mikhailenko
 #
 #  This file is part of django-autoslug.
 #
