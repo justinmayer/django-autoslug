@@ -9,7 +9,11 @@
 #  Software Foundation. See the file README for copying conditions.
 #
 
+# python
+import uuid
+
 # django
+from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import ForeignKey
 from django.db.models.fields import FieldDoesNotExist, DateField
@@ -52,6 +56,9 @@ def generate_unique_slug(field, instance, slug, manager):
     in the query when looking for a "rival" model instance.
     """
 
+    MAX_NUM_OF_TRIES_FOR_UNIQUE_SLUG_GENERATION = getattr(
+            settings, 'AUTOSLUG_MAX_NUM_OF_TRIES_FOR_UNIQUE_SLUG_GENERATION', 100)
+
     original_slug = slug = crop_slug(field, slug)
 
     default_lookups = tuple(get_uniqueness_lookups(field, instance, field.unique_with))
@@ -76,6 +83,10 @@ def generate_unique_slug(field, instance, slug, manager):
 
         # the slug is not unique; change once more
         index += 1
+
+        if index >= MAX_NUM_OF_TRIES_FOR_UNIQUE_SLUG_GENERATION:
+            slug = crop_slug(field, str(uuid.uuid4()))
+            continue
 
         # ensure the resulting string is not too long
         tail_length = len(field.index_sep) + len(str(index))
