@@ -56,8 +56,8 @@ def generate_unique_slug(field, instance, slug, manager):
     in the query when looking for a "rival" model instance.
     """
 
-    MAX_NUM_OF_TRIES_FOR_UNIQUE_SLUG_GENERATION = getattr(
-            settings, 'AUTOSLUG_MAX_NUM_OF_TRIES_FOR_UNIQUE_SLUG_GENERATION', 100)
+    # MAX_NUM_OF_TRIES_FOR_UNIQUE_SLUG_GENERATION = getattr(
+    #         settings, 'AUTOSLUG_MAX_NUM_OF_TRIES_FOR_UNIQUE_SLUG_GENERATION', 100)
 
     original_slug = slug = crop_slug(field, slug)
 
@@ -84,9 +84,9 @@ def generate_unique_slug(field, instance, slug, manager):
         # the slug is not unique; change once more
         index += 1
 
-        if index >= MAX_NUM_OF_TRIES_FOR_UNIQUE_SLUG_GENERATION:
-            slug = crop_slug(field, str(uuid.uuid4()))
-            continue
+        # if index >= MAX_NUM_OF_TRIES_FOR_UNIQUE_SLUG_GENERATION:
+        #     slug = crop_slug(field, str(uuid.uuid4()))
+        #     continue
 
         # ensure the resulting string is not too long
         tail_length = len(field.index_sep) + len(str(index))
@@ -127,7 +127,12 @@ def get_uniqueness_lookups(field, instance, unique_with):
         value = getattr(instance, field_name)
         if not value:
             if other_field.blank:
-                field_object, model, direct, m2m = instance._meta.get_field_by_name(field_name)
+
+                field_object = instance._meta.get_field(field_name)
+                model = field_object.model
+                direct = not field.auto_created or field.concrete
+                m2m = field_object.many_to_many
+
                 if isinstance(field_object, ForeignKey):
                     lookup = '%s__isnull' % field_name
                     yield lookup, True
