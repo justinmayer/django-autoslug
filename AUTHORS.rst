@@ -31,4 +31,5 @@ generally made django-autoslug better:
 * kane-c
 * Julien Dubiel
 * Tony Shtarev
+* Éloi Rivard
 * Your Name Here ;)
