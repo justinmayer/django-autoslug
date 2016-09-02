@@ -118,7 +118,12 @@ def get_uniqueness_lookups(field, instance, unique_with):
         value = getattr(instance, field_name)
         if not value:
             if other_field.blank:
-                field_object, model, direct, m2m = instance._meta.get_field_by_name(field_name)
+                try:
+                    field_object = instance._meta.get_field(field_name)
+                # For Django < 1.10
+                except AttributeError:
+                    field_object, model, direct, m2m = instance._meta.get_field_by_name(
+                        field_name)
                 if isinstance(field_object, ForeignKey):
                     lookup = '%s__isnull' % field_name
                     yield lookup, True
