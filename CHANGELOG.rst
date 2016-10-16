@@ -7,6 +7,7 @@ Version 1.9.4-dev
 New features:
 
 - Add `manager_name` kwarg to enable using custom managers from abstract models.
+- Django 1.10 compatibility.
 
 Version 1.9.3
 -------------

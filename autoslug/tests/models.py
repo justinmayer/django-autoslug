@@ -1,4 +1,4 @@
-from django.db.models import Model, CharField, DateField, BooleanField, ForeignKey, Manager
+from django.db.models import Model, CharField, DateField, BooleanField, ForeignKey, Manager, CASCADE
 
 
 # this app
@@ -18,7 +18,7 @@ class ModelWithUniqueSlug(Model):
 
 class ModelWithUniqueSlugFK(Model):
     name = CharField(max_length=200)
-    simple_model = ForeignKey(SimpleModel)
+    simple_model = ForeignKey(SimpleModel, on_delete=CASCADE)
     slug = AutoSlugField(populate_from='name', unique_with='simple_model__name')
 
 
@@ -138,7 +138,7 @@ class ModelWithSlugSpaceShared(SharedSlugSpace):
 
 class ModelWithUniqueSlugFKNull(Model):
     name = CharField(max_length=200)
-    simple_model = ForeignKey(SimpleModel, null=True, blank=True, default=None)
+    simple_model = ForeignKey(SimpleModel, null=True, blank=True, default=None, on_delete=CASCADE)
     slug = AutoSlugField(populate_from='name', unique_with='simple_model')
 
 
