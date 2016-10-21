@@ -52,7 +52,7 @@ def generate_unique_slug(field, instance, slug, manager):
     in the query when looking for a "rival" model instance.
     """
 
-    original_slug = slug = crop_slug(field, slug)
+    original_slug = slug = crop_slug(field, slug).rstrip(field.index_sep)
 
     default_lookups = tuple(get_uniqueness_lookups(field, instance, field.unique_with))
 
@@ -82,7 +82,8 @@ def generate_unique_slug(field, instance, slug, manager):
         combined_length = len(original_slug) + tail_length
         if field.max_length < combined_length:
             original_slug = original_slug[:field.max_length - tail_length]
-
+        # if orginal_slug ends with separator(s), strip
+        original_slug = original_slug.rstrip(field.index_sep)
         # re-generate the slug
         data = dict(slug=original_slug, sep=field.index_sep, index=index)
         slug = '%(slug)s%(sep)s%(index)d' % data

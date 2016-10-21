@@ -270,38 +270,39 @@ class AutoSlugField(SlugField):
                 print('Failed to populate slug %s.%s from %s' % \
                       (instance._meta.object_name, self.name, self.populate_from))
 
-        if value:
-            slug = self.slugify(value)
-        else:
-            slug = None
+            if value:
+                slug = self.slugify(value)
+            else:
+                slug = None
+
+                if not self.blank:
+                    slug = instance._meta.model_name
+                elif not self.null:
+                    slug = ''
 
             if not self.blank:
-                slug = instance._meta.model_name
-            elif not self.null:
-                slug = ''
+                assert slug, 'slug is defined before trying to ensure uniqueness'
 
-        if not self.blank:
-            assert slug, 'slug is defined before trying to ensure uniqueness'
+            if slug:
+                slug = utils.crop_slug(self, slug)
 
-        if slug:
-            slug = utils.crop_slug(self, slug)
+                # ensure the slug is unique (if required)
+                if self.unique or self.unique_with:
+                    slug = utils.generate_unique_slug(self, instance, slug, manager)
 
-            # ensure the slug is unique (if required)
-            if self.unique or self.unique_with:
-                slug = utils.generate_unique_slug(self, instance, slug, manager)
+                assert slug, 'value is filled before saving'
 
-            assert slug, 'value is filled before saving'
+            # make the updated slug available as instance attribute
+            setattr(instance, self.name, slug)
 
-        # make the updated slug available as instance attribute
-        setattr(instance, self.name, slug)
+            # modeltranslation support
+            if 'modeltranslation' in settings.INSTALLED_APPS \
+                    and not hasattr(self.populate_from, '__call__') \
+                    and autoslug_modeltranslation_enable:
+                post_save.connect(modeltranslation_update_slugs, sender=type(instance))
 
-        # modeltranslation support
-        if 'modeltranslation' in settings.INSTALLED_APPS \
-                and not hasattr(self.populate_from, '__call__') \
-                and autoslug_modeltranslation_enable:
-            post_save.connect(modeltranslation_update_slugs, sender=type(instance))
-
-        return slug
+            return slug
+        return value
 
 
     def south_field_triple(self):
