@@ -139,6 +139,10 @@ class AutoSlugFieldTestCase(TestCase):
         assert a.slug is not None
         assert a.slug == ''
 
+    def test_empty_slugify(self):
+        a = ModelWithUniqueSlug.objects.create(name='?')
+        assert a.slug
+
     def test_callable(self):
         a = ModelWithCallable.objects.create(name='larch')
         assert a.slug == u'the-larch'
