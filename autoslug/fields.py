@@ -16,11 +16,6 @@ from django.db.models.signals import post_save
 
 # 3rd-party
 try:
-    from south.modelsinspector import introspector
-except ImportError:
-    introspector = lambda self: [], {}
-
-try:
     from modeltranslation import utils as modeltranslation_utils
 except ImportError:
     modeltranslation_utils = None
@@ -303,9 +298,14 @@ class AutoSlugField(SlugField):
 
         return slug
 
-
     def south_field_triple(self):
         "Returns a suitable description of this field for South."
+        # Only south will call this method and there is no need to try to
+        # import it at top level. This also fix problem with Django 1.9+
+        # when South is still in the environment,
+        # https://bitbucket.org/neithere/django-autoslug/issues/47/after-project-upgrade-from-older-django
+        from south.modelsinspector import introspector
+
         args, kwargs = introspector(self)
         kwargs.update({
             'populate_from': 'None' if callable(self.populate_from) else repr(self.populate_from),
