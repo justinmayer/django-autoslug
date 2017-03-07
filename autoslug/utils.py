@@ -120,7 +120,7 @@ def get_uniqueness_lookups(field, instance, unique_with):
                 if isinstance(field_object, ForeignKey):
                     lookup = '%s__isnull' % field_name
                     yield lookup, True
-                break
+                continue
             raise ValueError('Could not check uniqueness of %s.%s with'
                              ' respect to %s.%s because the latter is empty.'
                              ' Please ensure that "%s" is declared *after*'
