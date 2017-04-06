@@ -35,8 +35,6 @@ if modeltranslation_installed:
 else:
     modeltranslation_utils = None
 
-#modeltranslation_active = autoslug_modeltranslation_enable and modeltranslation_installed and modeltranslation_utils
-
 
 __all__ = ['AutoSlugField']
 
