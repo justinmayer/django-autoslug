@@ -13,14 +13,19 @@ from django.core.management import call_command
 gettext = lambda s: s
 conf = dict(
     LANGUAGES = (
-        ('ru', gettext('Russian')),
         ('en', gettext('English')),
+        ('ru', gettext('Russian')),
     ),
+    LANGUAGE_CODE = 'en',
+    USE_I18N = True,
     USE_TZ = False,
     INSTALLED_APPS = [
         'modeltranslation',
         'autoslug'
     ],
+    MODELTRANSLATION_TRANSLATION_FILES = (
+        'autoslug.tests.translations',
+    ),
     DATABASES = dict(
         default = dict(
             ENGINE='django.db.backends.sqlite3',
@@ -28,6 +33,7 @@ conf = dict(
         ),
     ),
     AUTOSLUG_SLUGIFY_FUNCTION = 'django.template.defaultfilters.slugify',
+    AUTOSLUG_MODELTRANSLATION_ENABLE = True,
 )
 
 

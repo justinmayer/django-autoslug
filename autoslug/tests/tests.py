@@ -17,6 +17,7 @@ import unittest
 # django
 from django.db import IntegrityError
 from django.test import TestCase
+from django.utils import translation
 
 # this package
 from .models import *
@@ -259,3 +260,58 @@ class AutoSlugModelTranslationTestCase(TestCase):
         """
         a = ModeltranslationOne(title='hello', description='foo')
         a.save()
+
+    def test_modeltranslation_without_slug_translation_and_single_populate_from(self):
+        translation.activate('en')
+        a = ModeltranslationWithoutSlug(title='English Title')
+        a.save()
+        translation.activate('ru')
+        self.assertEqual(a.slug, u'english-title')
+        translation.activate('en')
+        self.assertEqual(a.slug, u'english-title')
+
+    def test_modeltranslation_without_slug_translation_and_multiple_populate_from(self):
+        translation.activate('en')
+        a = ModeltranslationWithoutSlug(title_en='English Title', title_ru='Russian Title')
+        a.save()
+        translation.activate('ru')
+        self.assertEqual(a.slug, u'english-title')
+        translation.activate('en')
+        self.assertEqual(a.slug, u'english-title')
+
+    def test_modeltranslation_with_slug_translation_and_single_populate_from(self):
+        translation.activate('en')
+        a = ModeltranslationWithSlug(title='Initial Title')
+        a.save()
+        self.assertEqual(a.slug, 'initial-title')
+        self.assertEqual(a.slug_en, 'initial-title')
+        self.assertEqual(a.slug_ru, 'initial-title')
+        translation.activate('ru')
+        self.assertEqual(a.slug, 'initial-title')
+        self.assertEqual(a.slug_en, 'initial-title')
+        self.assertEqual(a.slug_ru, 'initial-title')
+        a.title = 'Russian Title'
+        a.save()
+        self.assertEqual(a.slug, 'russian-title') #active language value
+        self.assertEqual(a.slug_en, 'initial-title')
+        self.assertEqual(a.slug_ru, 'russian-title') #fallback to default language
+        translation.activate('en')
+        a.title = 'English Title'
+        a.save()
+        self.assertEqual(a.slug, 'english-title')
+        self.assertEqual(a.slug_en, 'english-title')
+        self.assertEqual(a.slug_ru, 'russian-title') #fallback to default language
+
+    def test_modeltranslation_with_slug_translation_and_multiple_populate_from(self):
+        translation.activate('en')
+        a = ModeltranslationWithSlug(title_en='English Title', title_ru='Russian Title')
+        a.save()
+        translation.activate('ru')
+        self.assertEqual(a.slug, 'russian-title')
+        self.assertEqual(a.slug_en, 'english-title')
+        self.assertEqual(a.slug_ru, 'russian-title')
+        translation.activate('en')
+        self.assertEqual(a.slug, 'english-title')
+        self.assertEqual(a.slug_en, 'english-title')
+        self.assertEqual(a.slug_ru, 'russian-title')
+

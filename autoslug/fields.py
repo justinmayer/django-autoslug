@@ -20,14 +20,23 @@ try:
 except ImportError:
     introspector = lambda self: [], {}
 
-try:
-    from modeltranslation import utils as modeltranslation_utils
-except ImportError:
-    modeltranslation_utils = None
-
 # this app
 from autoslug.settings import slugify, autoslug_modeltranslation_enable
 from autoslug import utils
+
+# modeltranslation
+modeltranslation_installed = 'modeltranslation' in settings.INSTALLED_APPS
+
+if modeltranslation_installed:
+    try:
+        from modeltranslation import utils as modeltranslation_utils
+    except ImportError:
+        modeltranslation_utils = None
+else:
+    modeltranslation_utils = None
+
+#modeltranslation_active = autoslug_modeltranslation_enable and modeltranslation_installed and modeltranslation_utils
+
 
 __all__ = ['AutoSlugField']
 
@@ -296,9 +305,7 @@ class AutoSlugField(SlugField):
         setattr(instance, self.name, slug)
 
         # modeltranslation support
-        if 'modeltranslation' in settings.INSTALLED_APPS \
-                and not hasattr(self.populate_from, '__call__') \
-                and autoslug_modeltranslation_enable:
+        if modeltranslation_enable() and not hasattr(self.populate_from, '__call__'):
             post_save.connect(modeltranslation_update_slugs, sender=type(instance))
 
         return slug
@@ -314,13 +321,31 @@ class AutoSlugField(SlugField):
         return ('autoslug.fields.AutoSlugField', args, kwargs)
 
 
+def modeltranslation_enable():
+
+    #return autoslug_modeltranslation_enable and modeltranslation_installed and modeltranslation_utils
+
+    if not autoslug_modeltranslation_enable:
+        # this happens if settings.AUTOSLUG_MODELTRANSLATION_ENABLE = False
+        return False
+
+    if not modeltranslation_installed:
+        # this happens if 'modeltranslation' is not listed in settings.INSTALLED_APPS
+        return False
+
+    if not modeltranslation_utils:
+        # this happens if 'modeltranslation' is listed in settings.INSTALLED_APPS
+        # but the import of its utils module failed due some package structure changes
+        return False
+
+    return True
+
 def modeltranslation_update_slugs(sender, **kwargs):
     # https://bitbucket.org/neithere/django-autoslug/pull-request/11/modeltranslation-support-fix-issue-19/
+    # https://github.com/neithere/django-autoslug/issues/25
     # http://django-modeltranslation.readthedocs.org
-    #
-    # TODO: tests
-    #
-    if not modeltranslation_utils:
+
+    if not modeltranslation_enable():
         return
 
     instance = kwargs['instance']
@@ -346,10 +371,15 @@ def modeltranslation_update_slugs(sender, **kwargs):
                 continue
 
             populate_from_value = getattr(instance, populate_from_localized)
-            field_value = getattr(instance, field_name_localized)
+            field_value_localized = getattr(instance, field_name_localized)
 
-            if not field_value or field.always_update:
+            if not populate_from_value:
+                continue
+
+            if not field_value_localized or field.always_update:
                 slug = field.slugify(populate_from_value)
                 slugs[field_name_localized] = slug
+                setattr(instance, field_name_localized, slug)
 
-    sender.objects.filter(pk=instance.pk).update(**slugs)
+    if len(slugs):
+        sender.objects.filter(pk=instance.pk).update(**slugs)

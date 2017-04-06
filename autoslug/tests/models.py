@@ -147,6 +147,13 @@ class ModeltranslationOne(Model):
     description = CharField(max_length=255)
     slug = AutoSlugField(populate_from='title', always_update=True, unique=True)
 
+class ModeltranslationWithoutSlug(Model):
+    title = CharField(max_length=255)
+    slug = AutoSlugField(populate_from='title', always_update=True, unique=True)
+
+class ModeltranslationWithSlug(Model):
+    title = CharField(max_length=255)
+    slug = AutoSlugField(populate_from='title', always_update=True, unique=True)
 
 class NonDeletedObjects(Manager):
     def get_queryset(self):
