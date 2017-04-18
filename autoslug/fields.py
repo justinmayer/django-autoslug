@@ -295,7 +295,7 @@ class AutoSlugField(SlugField):
 
             # ensure the slug is unique (if required)
             if self.unique or self.unique_with:
-                slug = utils.generate_unique_slug(self, instance, slug, manager)
+                slug = utils.generate_unique_slug(self, self.name, instance, slug, manager)
 
             assert slug, 'value is filled before saving'
 
@@ -376,8 +376,23 @@ def modeltranslation_update_slugs(sender, **kwargs):
 
             if not field_value_localized or field.always_update:
                 slug = field.slugify(populate_from_value)
-                slugs[field_name_localized] = slug
-                setattr(instance, field_name_localized, slug)
+                if slug:
+                    slug = utils.crop_slug(field, slug)
+
+                    # ensure the translated slug is unique (if required)
+                    if field.unique or field.unique_with:
+
+                        if field.manager is not None:
+                            manager = field.manager
+                        elif field.manager_name is not None:
+                            manager = getattr(field.model, field.manager_name)
+                        else:
+                            manager = None
+
+                        slug = utils.generate_unique_slug(field, field_name_localized, instance, slug, manager)
+
+                    slugs[field_name_localized] = slug
+                    setattr(instance, field_name_localized, slug)
 
     if len(slugs):
         sender.objects.filter(pk=instance.pk).update(**slugs)

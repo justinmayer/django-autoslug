@@ -44,7 +44,7 @@ def get_prepopulated_value(field, instance):
         return callable(attr) and attr() or attr
 
 
-def generate_unique_slug(field, instance, slug, manager):
+def generate_unique_slug(field, field_name, instance, slug, manager):
     """
     Generates unique slug by adding a number to given value until no model
     instance can be found with such slug. If ``unique_with`` (a tuple of field
@@ -65,7 +65,7 @@ def generate_unique_slug(field, instance, slug, manager):
     # keep changing the slug until it is unique
     while True:
         # find instances with same slug
-        lookups = dict(default_lookups, **{field.name: slug})
+        lookups = dict(default_lookups, **{field_name: slug})
         rivals = manager.filter(**lookups)
         if instance.pk:
             rivals = rivals.exclude(pk=instance.pk)

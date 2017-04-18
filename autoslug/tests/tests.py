@@ -315,3 +315,23 @@ class AutoSlugModelTranslationTestCase(TestCase):
         self.assertEqual(a.slug_en, 'english-title')
         self.assertEqual(a.slug_ru, 'russian-title')
 
+    def test_modeltranslation_with_slug_translation_max_length(self):
+        translation.activate('en')
+        a = ModeltranslationWithSlug(title_en='English Title', title_ru='Lorem ipsum Labore \
+            non aliquip incididunt minim ullamco dolor ea ut et nisi occaecat. Lorem ipsum Eiusmod \
+            in qui veniam dolore incididunt in Excepteur cupidatat. Lorem ipsum Reprehenderit dolore \
+            cupidatat occaecat enim ex sed proident non deserunt dolore reprehenderit.')
+        a.save()
+        self.assertEqual(len(a.slug_ru), 50)
+
+    def test_modeltranslation_with_slug_translation_unique(self):
+        translation.activate('en')
+        a = ModeltranslationWithSlug(title_en='English Title', title_ru='Russian Title')
+        a.save()
+        b = ModeltranslationWithSlug(title_en='English Title', title_ru='Russian Title')
+        b.save()
+        self.assertEqual(a.slug_en, 'english-title')
+        self.assertEqual(a.slug_ru, 'russian-title')
+        self.assertEqual(b.slug_en, 'english-title-2')
+        self.assertEqual(b.slug_ru, 'russian-title-2')
+
