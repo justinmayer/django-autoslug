@@ -304,6 +304,7 @@ class AutoSlugField(SlugField):
 
         # modeltranslation support
         if modeltranslation_enable() and not hasattr(self.populate_from, '__call__'):
+            modeltranslation_update_slugs(sender=None, instance=instance)
             post_save.connect(modeltranslation_update_slugs, sender=type(instance))
 
         return slug
@@ -394,5 +395,5 @@ def modeltranslation_update_slugs(sender, **kwargs):
                     slugs[field_name_localized] = slug
                     setattr(instance, field_name_localized, slug)
 
-    if len(slugs):
+    if sender and len(slugs):
         sender.objects.filter(pk=instance.pk).update(**slugs)
