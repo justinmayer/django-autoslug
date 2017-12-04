@@ -70,14 +70,14 @@ More complex example:
 
 .. code-block:: python
 
-    from django.db.models import CharField, DateField, ForeignKey, Model
+    from django.db.models import CharField, DateField, ForeignKey, Model, CASCADE
     from django.contrib.auth.models import User
     from autoslug import AutoSlugField
 
     class Article(Model):
         title = CharField(max_length=200)
         pub_date = DateField(auto_now_add=True)
-        author = ForeignKey(User)
+        author = ForeignKey(User, on_delete=CASCADE)
         slug = AutoSlugField(populate_from=lambda instance: instance.title,
                              unique_with=['author__name', 'pub_date__month'],
                              slugify=lambda value: value.replace(' ','-'))
