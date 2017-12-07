@@ -58,7 +58,12 @@ Django settings that affect django-autoslug:
 
 """
 from django.conf import settings
-from django.core.urlresolvers import get_callable
+
+# Fixes django.core.urlresolvers import error in Django 2.0
+if django.VERSION[0] >= 2:
+    from django.urls import get_callable
+else:
+    from django.core.urlresolvers import get_callable
 
 # use custom slugifying function if any
 slugify_function_path = getattr(settings, 'AUTOSLUG_SLUGIFY_FUNCTION', 'autoslug.utils.slugify')
