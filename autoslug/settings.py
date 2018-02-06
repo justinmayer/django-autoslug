@@ -61,7 +61,7 @@ from django.conf import settings
 
 try:
   from django.core.urlresolvers import get_callable
-except ModuleNotFoundError:
+except:
   from django.urls import get_callable
 
 # use custom slugifying function if any
