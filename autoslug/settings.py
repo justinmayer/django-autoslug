@@ -57,8 +57,12 @@ Django settings that affect django-autoslug:
 .. _modeltranslation: http://django-modeltranslation.readthedocs.org
 
 """
+import django
 from django.conf import settings
-from django.core.urlresolvers import get_callable
+if django.__version__ >= '2.0.0':
+    from django.urls.utils import get_callable
+else:
+    from django.core.urlresolvers import get_callable
 
 # use custom slugifying function if any
 slugify_function_path = getattr(settings, 'AUTOSLUG_SLUGIFY_FUNCTION', 'autoslug.utils.slugify')
