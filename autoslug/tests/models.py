@@ -115,6 +115,12 @@ class ModelWithAcceptableEmptyDependency(Model):
     slug = AutoSlugField(unique_with='date')
 
 
+class ModelWithBooleanInUniqueWith(Model):
+    name = CharField(max_length=200)
+    bool = BooleanField()
+    slug = AutoSlugField(unique_with='bool', populate_from='name')
+
+
 class ModelWithAutoUpdateEnabled(Model):
     name = CharField(max_length=200)
     slug = AutoSlugField(populate_from='name', always_update=True)

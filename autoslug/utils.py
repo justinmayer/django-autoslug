@@ -11,7 +11,7 @@
 
 # django
 from django.core.exceptions import ImproperlyConfigured
-from django.db.models import ForeignKey
+from django.db.models import ForeignKey, BooleanField
 from django.db.models.fields import FieldDoesNotExist, DateField
 from django.template.defaultfilters import slugify as django_slugify
 
@@ -114,7 +114,7 @@ def get_uniqueness_lookups(field, instance, unique_with):
                              % (instance._meta.object_name, field_name))
 
         value = getattr(instance, field_name)
-        if not value:
+        if value is not False and not value:
             if other_field.blank:
                 field_object = instance._meta.get_field(field_name)
                 if isinstance(field_object, ForeignKey):
