@@ -4,8 +4,8 @@ django-autoslug
 .. image:: https://img.shields.io/coveralls/neithere/django-autoslug.svg
     :target: https://coveralls.io/r/neithere/django-autoslug
 
-.. image:: https://img.shields.io/travis/neithere/django-autoslug.svg
-    :target: https://travis-ci.org/neithere/django-autoslug
+.. image:: https://img.shields.io/travis/justinmayer/django-autoslug.svg
+    :target: https://travis-ci.org/justinmayer/django-autoslug
 
 .. image:: https://img.shields.io/pypi/format/django-autoslug.svg
     :target: https://pypi.python.org/pypi/django-autoslug
