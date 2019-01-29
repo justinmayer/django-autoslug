@@ -35,9 +35,10 @@ setup(
     description  = 'An automated slug field for Django.',
     long_description = readme,
     author       = 'Andy Mikhailenko',
-    author_email = 'neithere@gmail.com',
-    url          = 'https://github.com/neithere/django-autoslug/',
-    download_url = 'https://github.com/neithere/django-autoslug/archive/master.zip',
+    maintainer   = 'Justin Mayer',
+    author_email = 'entrop@gmail.com',
+    url          = 'https://github.com/justinmayer/django-autoslug/',
+    download_url = 'https://github.com/justinmayer/django-autoslug/archive/master.zip',
     license      = 'GNU Lesser General Public License (LGPL), Version 3',
     keywords     = 'django field slug auto unique transliteration i18n',
     classifiers  = [
