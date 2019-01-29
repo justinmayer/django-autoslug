@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # coding: utf-8
 #
-#  Copyright (c) 2008—2015 Andy Mikhailenko and contributors
+#  Copyright (c) 2018-present Justin Mayer
+#  Copyright (c) 2008—2016 Andy Mikhailenko
 #
 #  This file is part of django-autoslug.
 #
