@@ -14,4 +14,4 @@ after_success:
   coveralls
 notifications:
   email:
-    - neithere+travis@gmail.com
+    - entrop+travis@gmail.com
