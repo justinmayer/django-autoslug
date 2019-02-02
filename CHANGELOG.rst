@@ -1,8 +1,11 @@
 Changelog
 ~~~~~~~~~
 
+Next release
+-------------
+
 Version 1.9.4
------------------
+-------------
 
 New features:
 
