@@ -22,4 +22,12 @@ your contribution is reviewed and accepted ASAP.
 
 4. Add documentation (comments, docstrings, hints for users).
 
-5. Submit a pull request.  Reference the original issue there.
+5. Add a ``RELEASE.md`` file in the root of the project that contains the
+   release type (major, minor, patch) and a summary of the changes that will be
+   used as the release changelog entry. For example::
+
+       Release type: patch
+
+       Add pyproject.toml to MANIFEST.in
+
+6. Submit a pull request.  Reference the original issue there.

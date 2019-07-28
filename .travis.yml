@@ -17,6 +17,30 @@ script:
   coverage run --source=autoslug run_tests.py
 after_success:
   coveralls
+before_deploy:
+  - 'if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then travis_terminate 0; fi'
+  - 'if [ $TRAVIS_PYTHON_VERSION != "3.7" ]; then travis_terminate 0; fi'
+  - pip install githubrelease
+  - pip install --pre autopub
+  - autopub check || travis_terminate 0
+  - pip install poetry
+  - pip install twine
+  - git checkout ${TRAVIS_BRANCH}
+  - git remote set-url origin https://$GITHUB_TOKEN@github.com/$TRAVIS_REPO_SLUG
+deploy:
+  provider: script
+  script: autopub deploy
+  skip_cleanup: true
+  on:
+    branch: master
+    python: "3.7"
 notifications:
   email:
     - entrop+travis@gmail.com
+env:
+  global:
+    - PYPI_USERNAME=autopub
+    - secure: "h/uaj7XZfr9jiAqtSHNuX9Zt9YaSLD2Z0t6dxzdeKRiTe+AHdFORfO1zhqr10g8qAXhwZcD5G/tl8X2qJ+GI4eG3mLUoVL0JuNkV/EW+y5nclfDSFg9naT/soHk7AZ63EG8125B+XIQdiUT4ZY0DeMVujZjV9c/eztIwU8J/jiaLjmELcuJkV8xjcFMH5qzvX4mWeNehUuNdGj2KPCE1Pm19HeXQPavEv3oWWUk2Lx69OJJTllevhnlpg3C0kMrOCvoMNGJk/CVoumBv7HkRAegtjXg0an09B47nAnmDaoyqB5FGPSvI5b+C6OhI+z2wMFFP7FEqKVNhwojFkX4WKU7pak7P5xMkFhH7sm5ggX1gYOthZGrBwKnQV3rCLVq2JZnWeAMmzAKGcOEHc1OU5ArzdmhlXfjAgJEiGmKMKnGGTyHE4rZPgTT0UreevB+0cpfsWj223bCU8xxvM+ckIXeWJ/q7WmuOB+Je6cpIuHSDOgD9F7PVH+fD+l/26Fn35OAg+0TE/dF6fm8M6N18YxdQHgQuiCHpn9Czm49Lqh5YuaXEvOUT3ZFaD3U6YFeDlqofPoP4VjuANL1NC0tJPzguwFM8lXskqezC3snR8sdKsOJVSAeOaEFjWMPN8YQVYWoM9seV/tQavupXCzUQLCeUnsrxRR4yTtcTPsD9sPQ="
+    - secure: "NEDBJi/MUb4z4hCyVGEVtgPmilOap+ym6Md1HHxpAE+iaQpO6DpugSjh9XC2t3JT2MqTLiAU66mbcvgVjExC6HLA0W/eigRpHr4q4Md1aEenelNP+G+JJdw1xlGY930GX3U058v9+gujJNKtwADnejkrPc5SAPLcNgcOQD8BM8A+XGQaby2QHr4TCq9KakZaR5wBIdQlVoqvkcz7SteVD3eGy/PEk8ZwXI+caRgeDZQ+d1IZGuDwId6PllDUbnzb3hKgN42IvwBr/bAQq8itzUZl/sR7ZnDGsE4xUXqu6Pk1IYpnsdiK+B65jpZ7CLozc2vdZKdu5mq2Br7iFCjUsP5xGLd3f+K2sLT2Mnrd0j6Lbf1+3iFHf6fPg5k0HRzntFqxZs/TesxALy7RvmK70EFyhpLhc8rYytZgMln32+2YAnauPQliUElLQ1vtfTta6Tr2k1gNTEpGRPPrALNJwgXRCYfal18LpXN26PGzBVHVM1IEoHnOHxEB440486im+h8BSnydMYZ56T3F6rFPWE5qBV9V/aKOSJnTCIjkvBQeI3O03deSGLTWnhHMyOh6T4T+3INLliW6if3//QQ/20JGK9TDzIrpVnUBmveIMFmNu0HXV1Yg0REQwZKVGZ2D95S0Zhj2mijKkSG4Dru2kzVHVkyoHaFCvPUoPPNh+is="
+    - TWINE_USERNAME=$PYPI_USERNAME
+    - TWINE_PASSWORD=$PYPI_PASSWORD

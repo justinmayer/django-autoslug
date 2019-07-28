@@ -1,6 +1,6 @@
 include *.rst
 include COPYING.LESSER
-include setup.py _version_helper.py
+include pyproject.toml setup.py _version_helper.py
 include run_tests.py
 recursive-include autoslug *.py
 recursive-include docs *
