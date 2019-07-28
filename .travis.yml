@@ -19,6 +19,7 @@ after_success:
   coveralls
 before_deploy:
   - 'if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then travis_terminate 0; fi'
+  - 'if [ $TRAVIS_PYTHON_VERSION != "3.7" ]; then travis_terminate 0; fi'
   - pip install githubrelease
   - pip install --pre autopub
   - autopub check || travis_terminate 0
@@ -32,6 +33,7 @@ deploy:
   skip_cleanup: true
   on:
     branch: master
+    python: "3.7"
 notifications:
   email:
     - entrop+travis@gmail.com
