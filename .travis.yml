@@ -10,7 +10,6 @@ matrix:
     - python: 3.7
       env:
         - TOX_ENV=py37
-sudo: false
 install:
   - pip install -r requirements/testing.txt
   - pip install coveralls
