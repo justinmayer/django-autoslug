@@ -1,6 +1,11 @@
 Changelog
 ~~~~~~~~~
 
+1.9.5 - 2019-07-28
+------------------
+
+Add license to sdist and wheels
+
 Version 1.9.4
 -------------
 
