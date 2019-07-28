@@ -1,5 +1,5 @@
 include *.rst
-include setup.py _version_helper.py
+include pyproject.toml setup.py _version_helper.py
 recursive-include autoslug *.py
 recursive-include docs *
 recursive-exclude docs *.pyc
