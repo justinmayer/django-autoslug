@@ -1,6 +1,7 @@
 # coding: utf-8
 #
-#  Copyright (c) 2008—2015 Andy Mikhailenko
+#  Copyright (c) 2018-present Justin Mayer
+#  Copyright (c) 2008—2016 Andy Mikhailenko
 #
 #  This file is part of django-autoslug.
 #
@@ -118,12 +119,7 @@ def get_uniqueness_lookups(field, instance, unique_with):
         value = getattr(instance, field_name)
         if not value:
             if other_field.blank:
-                try:
-                    field_object = instance._meta.get_field(field_name)
-                # For Django < 1.10
-                except AttributeError:
-                    field_object, model, direct, m2m = instance._meta.get_field_by_name(
-                        field_name)
+                field_object = instance._meta.get_field(field_name)
                 if isinstance(field_object, ForeignKey):
                     lookup = '%s__isnull' % field_name
                     yield lookup, True

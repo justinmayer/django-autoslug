@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "django-autoslug"
+version = "1.9.5"
+description = "AutoSlugField for Django"
+authors = ["Justin Mayer <entroP@gmail.com>"]
+readme = "README.rst"
+license = "LGPL-3.0"
+keywords = ["django", "model"]
+
+[tool.autopub]
+project-name = "django-autoslug"
+git-username = "botpub"
+git-email = "botpub@autopub.rocks"
+changelog-file = "CHANGELOG.rst"
+changelog-header = "~~~~~~~~~"
+version-strings = ["autoslug/__init__.py"]
+
+[build-system]
+requires = ["setuptools >= 40.6.0", "wheel"]

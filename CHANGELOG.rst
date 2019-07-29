@@ -1,12 +1,19 @@
 Changelog
 ~~~~~~~~~
 
-Version 1.9.4-dev
------------------
+1.9.5 - 2019-07-28
+------------------
+
+Add license to sdist and wheels
+
+Version 1.9.4
+-------------
 
 New features:
 
-- Add `manager_name` kwarg to enable using custom managers from abstract models.
+- Add `manager_name` kwarg to enable using custom managers from abstract models
+- Add compatibility for Django versions 1.10, 1.11, 2.0, and 2.1
+- Transfer project to new maintainer
 
 Version 1.9.3
 -------------

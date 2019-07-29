@@ -1,6 +1,17 @@
-from django.db.models import (Model, CharField, DateField, DateTimeField,
-                              BooleanField, ForeignKey, Manager)
-
+# coding: utf-8
+#
+#  Copyright (c) 2018-present Justin Mayer
+#  Copyright (c) 2008—2016 Andy Mikhailenko
+#
+#  This file is part of django-autoslug.
+#
+#  django-autoslug is free software under terms of the GNU Lesser
+#  General Public License version 3 (LGPLv3) as published by the Free
+#  Software Foundation. See the file README for copying conditions.
+#
+from django.db.models import (
+    Model, CharField, DateField, DateTimeField, BooleanField, ForeignKey, Manager, CASCADE
+)
 
 # this app
 from autoslug import AutoSlugField
@@ -19,7 +30,7 @@ class ModelWithUniqueSlug(Model):
 
 class ModelWithUniqueSlugFK(Model):
     name = CharField(max_length=200)
-    simple_model = ForeignKey(SimpleModel)
+    simple_model = ForeignKey(SimpleModel, on_delete=CASCADE)
     slug = AutoSlugField(populate_from='name', unique_with='simple_model__name')
 
 
@@ -139,7 +150,7 @@ class ModelWithSlugSpaceShared(SharedSlugSpace):
 
 class ModelWithUniqueSlugFKNull(Model):
     name = CharField(max_length=200)
-    simple_model = ForeignKey(SimpleModel, null=True, blank=True, default=None)
+    simple_model = ForeignKey(SimpleModel, null=True, blank=True, default=None, on_delete=CASCADE)
     slug = AutoSlugField(populate_from='name', unique_with='simple_model')
 
 

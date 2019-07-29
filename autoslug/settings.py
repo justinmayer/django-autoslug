@@ -1,6 +1,7 @@
 # coding: utf-8
 #
-#  Copyright (c) 2008—2015 Andy Mikhailenko
+#  Copyright (c) 2018-present Justin Mayer
+#  Copyright (c) 2008—2016 Andy Mikhailenko
 #
 #  This file is part of django-autoslug.
 #
@@ -58,7 +59,12 @@ Django settings that affect django-autoslug:
 
 """
 from django.conf import settings
-from django.core.urlresolvers import get_callable
+from django import VERSION
+
+if VERSION >= (2, 0):
+    from django.urls import get_callable
+else:
+    from django.core.urlresolvers import get_callable
 
 # use custom slugifying function if any
 slugify_function_path = getattr(settings, 'AUTOSLUG_SLUGIFY_FUNCTION', 'autoslug.utils.slugify')
