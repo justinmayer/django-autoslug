@@ -18,6 +18,8 @@ import unittest
 # django
 from django.db import IntegrityError
 from django.test import TestCase
+from django.test import override_settings
+from django.utils.timezone import make_aware
 
 # this package
 from .models import *
@@ -76,6 +78,24 @@ class AutoSlugFieldTestCase(TestCase):
         a = ModelWithUniqueSlugDate(slug='test', date=datetime.date(2009, 9,  9))
         b = ModelWithUniqueSlugDate(slug='test', date=datetime.date(2009, 9,  9))
         c = ModelWithUniqueSlugDate(slug='test', date=datetime.date(2009, 9, 10))
+        for m in a,b,c:
+            m.save()
+        assert a.slug == u'test'
+        assert b.slug == u'test-2'
+        assert c.slug == u'test'
+
+    @unittest.skipIf('PyPy' in sys.version, PYPY_DATE_FUNC_SKIP_MSG)
+    @override_settings(USE_TZ=True, DEFAULT_TIMEZONE='US/Pacific')
+    def test_unique_slug_date_with_tz(self):
+        try:
+            import pytz
+        except ImportError:
+            raise unittest.SkipTest("pytz is not available, skipping test")
+        same_day = make_aware(datetime.datetime(2009, 9,  9, 1), pytz.UTC)
+        different_day = make_aware(datetime.datetime(2009, 9, 10, 1), pytz.UTC)
+        a = ModelWithUniqueSlugDate(slug='test', date=same_day)
+        b = ModelWithUniqueSlugDate(slug='test', date=same_day)
+        c = ModelWithUniqueSlugDate(slug='test', date=different_day)
         for m in a,b,c:
             m.save()
         assert a.slug == u'test'

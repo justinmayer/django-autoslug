@@ -10,7 +10,7 @@
 #  Software Foundation. See the file README for copying conditions.
 #
 from django.db.models import (
-    Model, CharField, DateField, BooleanField, ForeignKey, Manager, CASCADE
+    Model, CharField, DateField, DateTimeField, BooleanField, ForeignKey, Manager, CASCADE
 )
 
 # this app
@@ -40,7 +40,7 @@ class ModelWithUniqueSlugDate(Model):
 
 
 class ModelWithUniqueSlugDay(Model):  # same as ...Date, just more explicit
-    date = DateField()
+    date = DateTimeField()
     slug = AutoSlugField(unique_with='date__day')
 
 
