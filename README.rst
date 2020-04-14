@@ -1,9 +1,6 @@
 django-autoslug
 ~~~~~~~~~~~~~~~
 
-.. image:: https://img.shields.io/coveralls/neithere/django-autoslug.svg
-    :target: https://coveralls.io/r/neithere/django-autoslug
-
 .. image:: https://img.shields.io/travis/justinmayer/django-autoslug.svg
     :target: https://travis-ci.org/justinmayer/django-autoslug
 
@@ -22,11 +19,8 @@ django-autoslug
 .. image:: https://img.shields.io/pypi/dd/django-autoslug.svg
     :target: https://pypi.python.org/pypi/django-autoslug
 
-.. image:: https://readthedocs.org/projects/django-autoslug/badge/?version=stable
-    :target: http://django-autoslug.readthedocs.org/en/stable/
-
 .. image:: https://readthedocs.org/projects/django-autoslug/badge/?version=latest
-    :target: http://django-autoslug.readthedocs.org/en/latest/
+    :target: https://django-autoslug.readthedocs.io/en/latest/
 
 Django-autoslug is a reusable Django library that provides an improved
 slug field which can automatically:
