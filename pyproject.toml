@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "django-autoslug"
-version = "1.9.6"
+version = "1.9.7"
 description = "AutoSlugField for Django"
 authors = ["Justin Mayer <entroP@gmail.com>"]
 readme = "README.rst"
