@@ -61,7 +61,7 @@ def generate_unique_slug(field, instance, slug, manager):
 
     index = 1
 
-    if not manager:
+    if manager is None:
         manager = field.model._default_manager
 
 
