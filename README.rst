@@ -40,9 +40,9 @@ The field is highly configurable.
 Requirements
 ------------
 
-*Python 2.7, 3.5+, or PyPy*.
+*Python 3.5+ or PyPy*.
 
-*Django 1.7.10* or higher.
+*Django 1.11* or higher.
 
 It may be possible to successfully use django-autoslug in other environments
 but they are not tested.
