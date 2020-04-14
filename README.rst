@@ -87,11 +87,11 @@ Community
 
 This application is maintained by Justin Mayer. It was initially created by
 Andy Mikhailenko and then improved by other developers. They are listed in
-`AUTHORS.rst`.
+``AUTHORS.rst``.
 
 Please feel free to file issues and/or submit patches.
 
-See `CONTRIBUTING.rst` for hints related to the preferred workflow.
+See ``CONTRIBUTING.rst`` for hints related to the preferred workflow.
 
 
 Licensing
