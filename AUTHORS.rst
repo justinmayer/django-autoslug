@@ -38,4 +38,5 @@ generally made django-autoslug better:
 * Éloi Rivard
 * Peter Baumgartner
 * Jernej Kos
+* `Sutrisno Efendi <http://github.com/kangfend>`_
 * Your Name Here ;)
