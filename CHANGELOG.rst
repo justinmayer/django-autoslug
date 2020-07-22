@@ -1,6 +1,11 @@
 Changelog
 ~~~~~~~~~
 
+1.9.8 - 2020-07-22
+------------------
+
+Move FieldDoesNotExist import for compatibility with Django 3.1
+
 1.9.7 - 2020-04-14
 ------------------
 
