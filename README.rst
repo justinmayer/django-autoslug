@@ -74,7 +74,7 @@ More complex example:
         author = ForeignKey(User)
         slug = AutoSlugField(populate_from=lambda instance: instance.title,
                              unique_with=['author__name', 'pub_date__month'],
-                             slugify=lambda value: value.replace(' ','-'))
+                             slugify_function=lambda value: value.replace(' ','-'))
 
 Documentation
 -------------
