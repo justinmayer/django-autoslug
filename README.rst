@@ -46,6 +46,13 @@ but they are not tested.
   PyPy3 is not officially supported only because there were some problems with
   permissions and ``__pycache__`` on CI unrelated to django-autoslug itself.
 
+Installation
+------------
+
+.. code-block:: python
+
+    pip install django-autoslug
+
 Examples
 --------
 
