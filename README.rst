@@ -51,7 +51,7 @@ Installation
 
 .. code-block:: python
 
-    pip install django-autoslug
+    python -m pip install django-autoslug
 
 Examples
 --------
