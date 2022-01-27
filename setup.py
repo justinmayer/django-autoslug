@@ -23,7 +23,7 @@ setup(
     version  = __version__,
     packages = ['autoslug'],
 
-    requires = ['python (>= 3.7)', 'django (>= 1.11)'],
+    requires = ['python (>= 3.7)', 'django (>= 2.2)'],
     # in case you want to use slugify() with support for transliteration:
     extras_require = {
         'cyrillic': 'pytils >= 0.2',
@@ -44,11 +44,7 @@ setup(
         'Intended Audience :: Developers',
         'License :: OSI Approved :: GNU Library or Lesser General Public License (LGPL)',
         'Framework :: Django',
-        'Framework :: Django :: 1.11',
-        'Framework :: Django :: 2.0',
-        'Framework :: Django :: 2.1',
         'Framework :: Django :: 2.2',
-        'Framework :: Django :: 3.0',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.7',

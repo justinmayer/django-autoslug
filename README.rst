@@ -36,7 +36,7 @@ Requirements
 
 *Python 3.7+ or PyPy*.
 
-*Django 1.11* or higher.
+*Django 2.2* or higher.
 
 It may be possible to successfully use django-autoslug in other environments
 but they are not tested.
