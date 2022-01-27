@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-#
 #  Copyright (c) 2018-present Justin Mayer
 #  Copyright (c) 2008—2016 Andy Mikhailenko
 #
@@ -26,7 +23,7 @@ setup(
     version  = __version__,
     packages = ['autoslug'],
 
-    requires = ['python (>= 3.5)', 'django (>= 1.11)'],
+    requires = ['python (>= 3.7)', 'django (>= 1.11)'],
     # in case you want to use slugify() with support for transliteration:
     extras_require = {
         'cyrillic': 'pytils >= 0.2',
@@ -54,8 +51,6 @@ setup(
         'Framework :: Django :: 3.0',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: Implementation :: CPython',

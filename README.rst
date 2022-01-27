@@ -34,7 +34,7 @@ The field is highly configurable.
 Requirements
 ------------
 
-*Python 3.5+ or PyPy*.
+*Python 3.7+ or PyPy*.
 
 *Django 1.11* or higher.
 

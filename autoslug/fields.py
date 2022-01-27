@@ -1,5 +1,3 @@
-# coding: utf-8
-#
 #  Copyright (c) 2018-present Justin Mayer
 #  Copyright (c) 2008—2016 Andy Mikhailenko
 #
@@ -214,7 +212,7 @@ class AutoSlugField(SlugField):
         super(SlugField, self).__init__(*args, **kwargs)
 
     def deconstruct(self):
-        name, path, args, kwargs = super(AutoSlugField, self).deconstruct()
+        name, path, args, kwargs = super().deconstruct()
 
         if self.max_length == 50:
             kwargs.pop('max_length', None)
