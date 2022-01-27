@@ -15,11 +15,6 @@ from django.db.models.signals import post_save
 
 # 3rd-party
 try:
-    from south.modelsinspector import introspector
-except ImportError:
-    introspector = lambda self: [], {}
-
-try:
     from modeltranslation import utils as modeltranslation_utils
 except ImportError:
     modeltranslation_utils = None
@@ -299,16 +294,6 @@ class AutoSlugField(SlugField):
             post_save.connect(modeltranslation_update_slugs, sender=type(instance))
 
         return slug
-
-
-    def south_field_triple(self):
-        "Returns a suitable description of this field for South."
-        args, kwargs = introspector(self)
-        kwargs.update({
-            'populate_from': 'None' if callable(self.populate_from) else repr(self.populate_from),
-            'unique_with': repr(self.unique_with)
-        })
-        return ('autoslug.fields.AutoSlugField', args, kwargs)
 
 
 def modeltranslation_update_slugs(sender, **kwargs):
