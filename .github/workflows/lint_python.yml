@@ -19,6 +19,6 @@ jobs:
       - run: pip install -r requirements/testing.txt
       - run: mkdir --parents --verbose .mypy_cache
       - run: mypy --ignore-missing-imports --install-types --non-interactive . || true
-      - run: python run_tests.py || true
+      - run: python run_tests.py
       - run: shopt -s globstar && pyupgrade --py37-plus **/*.py || true
       - run: safety check
