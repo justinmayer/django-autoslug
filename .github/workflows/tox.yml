@@ -13,11 +13,11 @@ jobs:
       - uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python }}
-      - uses: coverallsapp/github-action@master
-        with:
-          github-token: ${{ secrets.github_token }}
-          flag-name: run-${{ matrix.python }}
-          parallel: true
+      #- uses: coverallsapp/github-action@master
+      #  with:
+      #    github-token: ${{ secrets.github_token }}
+      #    flag-name: run-${{ matrix.python }}
+      #    parallel: true
       - run: pip install --upgrade pip
       - run: pip install tox
       - run: tox -e py
