@@ -19,7 +19,6 @@ jobs:
       - run: pip install -r requirements/testing.txt
       - run: mkdir --parents --verbose .mypy_cache
       - run: mypy --ignore-missing-imports --install-types --non-interactive . || true
-      - run: pytest run_tests.py  # TODO: Rename to test_django_autoslug.py to comply with pytest discovery rules
-      - run: pytest --doctest-modules run_tests.py || true
+      - run: python run_tests.py || true
       - run: shopt -s globstar && pyupgrade --py37-plus **/*.py || true
       - run: safety check
