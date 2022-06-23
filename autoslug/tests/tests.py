@@ -272,6 +272,16 @@ class AutoSlugFieldTestCase(TestCase):
         _, _, _, kwargs = a._meta.get_field('slug').deconstruct()
         self.assertNotIn('manager', kwargs)
 
+    def test_long_name_with_trailing_dash(self):
+        long_name = 'xxxx ' * 20
+        a = ModelWithLongName(name=long_name)
+        a.save()
+        assert len(a.slug) == 50
+        assert a.slug.endswith('xxxx-')
+        a.name = 'different name'
+        a.save()
+        assert a.slug.endswith('xxxx')
+
 
 class AutoSlugModelTranslationTestCase(TestCase):
 
