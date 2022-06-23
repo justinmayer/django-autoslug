@@ -283,7 +283,7 @@ class AutoSlugField(SlugField):
                 slug = ''
 
         if slug:
-            slug = utils.crop_slug(self, slug)
+            slug = self.slugify(utils.crop_slug(self, slug))
 
             # ensure the slug is unique (if required)
             if self.unique or self.unique_with:
