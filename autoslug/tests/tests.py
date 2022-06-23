@@ -272,6 +272,37 @@ class AutoSlugFieldTestCase(TestCase):
         _, _, _, kwargs = a._meta.get_field('slug').deconstruct()
         self.assertNotIn('manager', kwargs)
 
+    def test_crop_with_trailing_dash(self):
+        long_name = 'xxxx ' * 20
+        a = ModelWithLongName(name=long_name)
+        a.save()
+        assert len(a.slug) == 49        # slug cropped, last char removed
+        assert a.slug[-4:] == u'xxxx'    # dash removed
+
+        long_name = 'xxxx-' * 20
+        a = ModelWithLongName(name=long_name)
+        a.save()
+        assert len(a.slug) == 49        # slug cropped, last char removed
+        assert a.slug[-4:] == u'xxxx'    # dash removed
+
+        long_name = 'xxxx_' * 20
+        a = ModelWithLongName(name=long_name)
+        a.save()
+        assert len(a.slug) == 49        # slug cropped, last char removed
+        assert a.slug[-4:] == u'xxxx'    # underscore removed
+
+    def test_crop_with_trailing_dash_unique(self):
+        long_name = 'xxxx ' * 20
+        a = ModelWithLongNameUnique(name=long_name)
+        a.save()
+        assert len(a.slug) == 49        # slug cropped, last char removed
+        assert a.slug[-4:] == u'xxxx'    # dash removed
+
+        b = ModelWithLongNameUnique(name=long_name)
+        b.save()
+        assert len(b.slug) == 50         # slug cropped
+        assert b.slug[-4:] == u'xx-2'    # unique without dash
+
 
 class AutoSlugModelTranslationTestCase(TestCase):
 
