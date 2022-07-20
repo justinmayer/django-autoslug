@@ -205,7 +205,7 @@ class AutoSlugField(SlugField):
         # addition to ASCII letters. Defaults to False.
         self.allow_unicode = kwargs.pop('allow_unicode', False)
 
-        # When using model inheritence, set manager to search for matching
+        # When using model inheritance, set manager to search for matching
         # slug values
         self.manager = kwargs.pop('manager', None)
         self.manager_name = kwargs.pop('manager_name', None)
