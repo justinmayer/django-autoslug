@@ -58,6 +58,7 @@ Django settings that affect django-autoslug:
 .. _modeltranslation: http://django-modeltranslation.readthedocs.org
 
 """
+from typing import Callable
 from django.conf import settings
 from django import VERSION
 
@@ -68,7 +69,7 @@ else:
 
 # use custom slugifying function if any
 slugify_function_path = getattr(settings, 'AUTOSLUG_SLUGIFY_FUNCTION', 'autoslug.utils.slugify')
-slugify = get_callable(slugify_function_path)
+slugify: Callable[[str], str] = get_callable(slugify_function_path)
 
 # enable/disable modeltranslation support
 autoslug_modeltranslation_enable = getattr(settings, 'AUTOSLUG_MODELTRANSLATION_ENABLE', False)
