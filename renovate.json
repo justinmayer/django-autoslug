@@ -1,0 +1,33 @@
+{
+  "extends": [
+    "config:base"
+  ],
+
+  "dependencies": {
+    "updateTypes": ["minor", "patch"],
+    "automerge": true
+  },
+  "devDependencies": {
+    "updateTypes": ["minor", "patch"],
+    "automerge": true
+  },
+
+  "digest": {
+    "enabled": false
+  },
+
+  "labels": [
+    "renovate"
+  ],
+
+  "packageRules": [
+      {
+        "matchPackageNames": ["Django"],
+        "allowedVersions": "=3.2"
+      },
+    ],
+
+  "pip_requirements": {
+    "fileMatch": ["^requirements/.*\\.txt$"]
+  }
+}
