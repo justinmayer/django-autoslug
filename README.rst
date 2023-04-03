@@ -1,8 +1,8 @@
 django-autoslug
 ~~~~~~~~~~~~~~~
 
-.. image:: https://img.shields.io/travis/justinmayer/django-autoslug.svg
-    :target: https://travis-ci.org/justinmayer/django-autoslug
+.. image:: https://img.shields.io/github/actions/workflow/status/justinmayer/django-autoslug/main.yml?branch=main
+    :target: https://github.com/justinmayer/django-autoslug/actions
 
 .. image:: https://img.shields.io/pypi/format/django-autoslug.svg
     :target: https://pypi.python.org/pypi/django-autoslug
