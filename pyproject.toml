@@ -15,6 +15,7 @@ changelog-file = "CHANGELOG.rst"
 changelog-header = "~~~~~~~~~"
 version-strings = ["autoslug/__init__.py"]
 tag-prefix = "v"
+build-system = "setuptools"
 
 [build-system]
 requires = ["setuptools >= 40.6.0", "wheel"]
