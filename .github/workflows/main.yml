@@ -39,7 +39,7 @@ jobs:
       - name: Check release
         id: check_release
         run: |
-          python -m pip install poetry githubrelease httpx==0.18.2 autopub twine
+          python -m pip install poetry githubrelease httpx==0.18.2 autopub twine wheel
           echo "release=$(autopub check)" >> $GITHUB_OUTPUT
 
       - name: Publish
