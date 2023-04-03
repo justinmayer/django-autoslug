@@ -1,6 +1,12 @@
 Changelog
 ~~~~~~~~~
 
+1.9.9 - 2023-04-03
+------------------
+
+* Prevent situation in which slug could end in dash or underscore
+* Remove support for end-of-life Python & Django versions
+
 1.9.8 - 2020-07-22
 ------------------
 
