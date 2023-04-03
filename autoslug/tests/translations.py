@@ -1,5 +1,3 @@
-# coding: utf-8
-#
 #  Copyright (c) 2018-present Justin Mayer
 #  Copyright (c) 2008—2016 Andy Mikhailenko
 #

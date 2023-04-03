@@ -1,5 +1,3 @@
-# coding: utf-8
-#
 #  Copyright (c) 2018-present Justin Mayer
 #  Copyright (c) 2008—2016 Andy Mikhailenko
 #
@@ -162,7 +160,7 @@ class ModeltranslationOne(Model):
 
 class NonDeletedObjects(Manager):
     def get_queryset(self):
-        return super(NonDeletedObjects, self).get_queryset().filter(is_deleted=False)
+        return super().get_queryset().filter(is_deleted=False)
 
 
 class AbstractModelWithCustomManager(Model):
