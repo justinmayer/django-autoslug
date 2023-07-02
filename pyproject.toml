@@ -10,7 +10,7 @@ keywords = ["django", "model"]
 [tool.autopub]
 project-name = "django-autoslug"
 git-username = "botpub"
-git-email = "botpub@autopub.rocks"
+git-email = "52496925+botpub@users.noreply.github.com"
 changelog-file = "CHANGELOG.rst"
 changelog-header = "~~~~~~~~~"
 version-strings = ["autoslug/__init__.py"]
