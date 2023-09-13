@@ -22,6 +22,7 @@ setup(
     name     = 'django-autoslug',
     version  = __version__,
     packages = ['autoslug'],
+    package_data={'autoslug': ['py.typed']},
 
     requires = ['python (>= 3.7)', 'django (>= 3.2)'],
     # in case you want to use slugify() with support for transliteration:
