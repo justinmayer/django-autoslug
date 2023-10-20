@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 #  Copyright (c) 2018-present Justin Mayer
 #  Copyright (c) 2008—2016 Andy Mikhailenko
 #
@@ -7,14 +9,27 @@
 #  General Public License version 3 (LGPLv3) as published by the Free
 #  Software Foundation. See the file README for copying conditions.
 #
+import datetime
+from typing import TYPE_CHECKING, Any, Tuple
 
 # django
-import datetime
-from django.core.exceptions import ImproperlyConfigured, FieldDoesNotExist
+from django.core.exceptions import FieldDoesNotExist
 from django.db.models import ForeignKey
 from django.db.models.fields import DateField
 from django.template.defaultfilters import slugify as django_slugify
 from django.utils.timezone import localtime, is_aware
+
+
+if TYPE_CHECKING:
+    from collections.abc import Callable, Generator, Sequence
+    from django.db.models import SlugField, Model, Manager
+    from django.db.models.base import Options
+    from .fields import AutoSlugField
+
+    SlugifyFunction = Callable[[str], str]
+    # This is enough to satisfy how it is used.
+    class DjangoModel(Model):
+        _meta: Options = ...
 
 try:
     # i18n-friendly approach
@@ -32,7 +47,7 @@ else:
         return django_slugify(unidecode(value))
 
 
-def get_prepopulated_value(field, instance):
+def get_prepopulated_value(field: AutoSlugField, instance: DjangoModel) -> Any:
     """
     Returns preliminary value based on `populate_from`.
     """
@@ -45,7 +60,7 @@ def get_prepopulated_value(field, instance):
         return callable(attr) and attr() or attr
 
 
-def generate_unique_slug(field, instance, slug, manager):
+def generate_unique_slug(field: AutoSlugField, instance: DjangoModel, slug: str, manager: Manager):
     """
     Generates unique slug by adding a number to given value until no model
     instance can be found with such slug. If ``unique_with`` (a tuple of field
@@ -91,7 +106,7 @@ def generate_unique_slug(field, instance, slug, manager):
         # ...next iteration...
 
 
-def get_uniqueness_lookups(field, instance, unique_with):
+def get_uniqueness_lookups(field: AutoSlugField, instance: DjangoModel, unique_with: Sequence[str]) -> Generator[Tuple[str, str], None, None]:
     """
     Returns a dict'able tuple of lookups to ensure uniqueness of a slug.
     """
@@ -164,7 +179,7 @@ def get_uniqueness_lookups(field, instance, unique_with):
                 yield field_name, value
 
 
-def crop_slug(field, slug):
+def crop_slug(field: SlugField, slug: str):
     if field.max_length < len(slug):
         return slug[:field.max_length]
     return slug
@@ -178,10 +193,14 @@ else:
     import re
     PUNCT_RE = re.compile(r'[\t !"#$%&\'()*\-/<=>?@\[\\\]^_`{|},.]+')
 
-    def translitcodec_slugify(codec):
-        def _slugify(value, delim='-', encoding=''):
+    def translitcodec_slugify(codec) -> SlugifyFunction:
+        # TODO: delim and encoding probably belong on the wrapper
+        def _slugify(value: str, delim: str ='-', encoding: str=''):
             """
             Generates an ASCII-only slug.
+            This works because translitcodec registers itself with python's
+            codecs registry, so there's no translitcodec module called here
+            directly, but via str.encode().
 
             Borrowed from http://flask.pocoo.org/snippets/5/
             """
@@ -189,12 +208,13 @@ else:
                 encoder = f"{codec}/{encoding}"
             else:
                 encoder = codec
+            _delim = delim.encode(encoder)
             result = []
             for word in PUNCT_RE.split(value.lower()):
                 word = word.encode(encoder)
                 if word:
                     result.append(word)
-            return unicode(delim.join(result))
+            return str(_delim.join(result))
         return _slugify
 
     translit_long = translitcodec_slugify("translit/long")
