@@ -20,7 +20,7 @@ from django.template.defaultfilters import slugify as django_slugify
 from django.utils.timezone import localtime, is_aware
 
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from collections.abc import Callable, Generator, Sequence
     from django.db.models import SlugField, Model, Manager
     from django.db.models.base import Options
