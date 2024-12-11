@@ -1,5 +1,15 @@
-from django.db.models import Model, CharField, DateField, BooleanField, ForeignKey, Manager, CASCADE
-
+#  Copyright (c) 2018-present Justin Mayer
+#  Copyright (c) 2008—2016 Andy Mikhailenko
+#
+#  This file is part of django-autoslug.
+#
+#  django-autoslug is free software under terms of the GNU Lesser
+#  General Public License version 3 (LGPLv3) as published by the Free
+#  Software Foundation. See the file README for copying conditions.
+#
+from django.db.models import (
+    Model, CharField, DateField, DateTimeField, BooleanField, ForeignKey, Manager, CASCADE
+)
 
 # this app
 from autoslug import AutoSlugField
@@ -28,7 +38,7 @@ class ModelWithUniqueSlugDate(Model):
 
 
 class ModelWithUniqueSlugDay(Model):  # same as ...Date, just more explicit
-    date = DateField()
+    date = DateTimeField()
     slug = AutoSlugField(unique_with='date__day')
 
 
@@ -156,7 +166,7 @@ class ModeltranslationOne(Model):
 
 class NonDeletedObjects(Manager):
     def get_queryset(self):
-        return super(NonDeletedObjects, self).get_queryset().filter(is_deleted=False)
+        return super().get_queryset().filter(is_deleted=False)
 
 
 class AbstractModelWithCustomManager(Model):

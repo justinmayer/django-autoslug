@@ -1,7 +1,5 @@
-#!/usr/bin/env python
-# coding: utf-8
-#
-#  Copyright (c) 2008—2015 Andy Mikhailenko and contributors
+#  Copyright (c) 2018-present Justin Mayer
+#  Copyright (c) 2008—2016 Andy Mikhailenko
 #
 #  This file is part of django-autoslug.
 #
@@ -25,7 +23,7 @@ setup(
     version  = __version__,
     packages = ['autoslug'],
 
-    requires = ['python (>= 2.7)', 'django (>= 1.7.10)'],
+    requires = ['python (>= 3.7)', 'django (>= 3.2)'],
     # in case you want to use slugify() with support for transliteration:
     extras_require = {
         'cyrillic': 'pytils >= 0.2',
@@ -33,10 +31,10 @@ setup(
     },
     description  = 'An automated slug field for Django.',
     long_description = readme,
-    author       = 'Andy Mikhailenko',
-    author_email = 'neithere@gmail.com',
-    url          = 'https://github.com/neithere/django-autoslug/',
-    download_url = 'https://github.com/neithere/django-autoslug/archive/master.zip',
+    author       = 'Justin Mayer',
+    author_email = 'entrop@gmail.com',
+    url          = 'https://github.com/justinmayer/django-autoslug/',
+    download_url = 'https://github.com/justinmayer/django-autoslug/archive/master.zip',
     license      = 'GNU Lesser General Public License (LGPL), Version 3',
     keywords     = 'django field slug auto unique transliteration i18n',
     classifiers  = [
@@ -45,11 +43,14 @@ setup(
         'Framework :: Django',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: GNU Library or Lesser General Public License (LGPL)',
+        'Framework :: Django',
+        'Framework :: Django :: 3.2',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
         'Programming Language :: Python :: Implementation :: CPython',
         'Programming Language :: Python :: Implementation :: PyPy',
         'Topic :: Software Development :: Libraries :: Python Modules',

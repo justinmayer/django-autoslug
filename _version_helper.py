@@ -20,7 +20,7 @@ __all__ = ['__version__']
 __version__ = None
 thisfile = inspect.getfile(inspect.currentframe())
 path = os.path.join(os.path.abspath(os.path.dirname(thisfile)), 'autoslug/__init__.py')
-with io.open(path, encoding='utf8') as f:
+with open(path, encoding='utf8') as f:
     for line in f:
         if line.startswith('__version__'):
             exec(line)

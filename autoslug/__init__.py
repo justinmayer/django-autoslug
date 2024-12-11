@@ -1,6 +1,5 @@
-# coding: utf-8
-#
-#  Copyright (c) 2008—2015 Andy Mikhailenko
+#  Copyright (c) 2018-present Justin Mayer
+#  Copyright (c) 2008—2016 Andy Mikhailenko
 #
 #  This file is part of django-autoslug.
 #
@@ -11,5 +10,5 @@
 from autoslug.fields import AutoSlugField
 
 
-__version__ = '1.9.4-dev'
+__version__ = '1.9.9'
 __all__ = ['AutoSlugField']

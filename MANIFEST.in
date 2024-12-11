@@ -1,9 +1,11 @@
 include *.rst
-include setup.py _version_helper.py
+include COPYING.LESSER
+include pyproject.toml setup.py _version_helper.py
+include run_tests.py
 recursive-include autoslug *.py
 recursive-include docs *
-recursive-exclude docs *.pyc
-recursive-exclude docs *.pyo
+recursive-exclude * __pycache__
+recursive-exclude * *.py[co]
 prune docs/_build
 prune docs/_themes
 
