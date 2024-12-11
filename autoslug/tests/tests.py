@@ -228,6 +228,28 @@ class AutoSlugFieldTestCase(TestCase):
         with self.assertRaises(ValueError, msg=errmsg):
             a.save()
 
+    def test_unique_with_boolean_field(self):
+        a = ModelWithBooleanInUniqueWith.objects.create(name='test', bool=True)
+        b = ModelWithBooleanInUniqueWith.objects.create(name='test', bool=False)
+        c = ModelWithBooleanInUniqueWith.objects.create(name='test', bool=False)
+        d = ModelWithBooleanInUniqueWith.objects.create(name='test', bool=True)
+
+        self.assertEqual(a.slug, 'test')
+        self.assertEqual(b.slug, 'test')
+        self.assertEqual(c.slug, 'test-2')
+        self.assertEqual(d.slug, 'test-2')
+
+    def test_unique_with_boolean_field_false_true(self):
+        a = ModelWithBooleanInUniqueWith.objects.create(name='test', bool=False)
+        b = ModelWithBooleanInUniqueWith.objects.create(name='test', bool=True)
+        c = ModelWithBooleanInUniqueWith.objects.create(name='test', bool=False)
+        d = ModelWithBooleanInUniqueWith.objects.create(name='test', bool=True)
+
+        self.assertEqual(a.slug, 'test')
+        self.assertEqual(b.slug, 'test')
+        self.assertEqual(c.slug, 'test-2')
+        self.assertEqual(d.slug, 'test-2')
+
     def test_acceptable_empty_dependency(self):
         model = ModelWithAcceptableEmptyDependency
         instances = [model.objects.create(slug='hello') for x in range(0,2)]

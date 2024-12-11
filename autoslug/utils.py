@@ -115,7 +115,7 @@ def get_uniqueness_lookups(field, instance, unique_with):
                              % (instance._meta.object_name, field_name))
 
         value = getattr(instance, field_name)
-        if not value:
+        if value is not False and not value:
             if other_field.blank:
                 field_object = instance._meta.get_field(field_name)
                 if isinstance(field_object, ForeignKey):
