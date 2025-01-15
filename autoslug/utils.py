@@ -1,5 +1,3 @@
-# coding: utf-8
-#
 #  Copyright (c) 2018-present Justin Mayer
 #  Copyright (c) 2008—2016 Andy Mikhailenko
 #
@@ -12,9 +10,9 @@
 
 # django
 import datetime
-from django.core.exceptions import ImproperlyConfigured
+from django.core.exceptions import ImproperlyConfigured, FieldDoesNotExist
 from django.db.models import ForeignKey
-from django.db.models.fields import FieldDoesNotExist, DateField
+from django.db.models.fields import DateField
 from django.template.defaultfilters import slugify as django_slugify
 from django.utils.timezone import localtime, is_aware
 
@@ -117,7 +115,7 @@ def get_uniqueness_lookups(field, instance, unique_with):
                              % (instance._meta.object_name, field_name))
 
         value = getattr(instance, field_name)
-        if not value:
+        if value is not False and not value:
             if other_field.blank:
                 field_object = instance._meta.get_field(field_name)
                 if isinstance(field_object, ForeignKey):
@@ -152,7 +150,7 @@ def get_uniqueness_lookups(field, instance, unique_with):
                                     % (parts, inner_lookup, original_lookup_name))
             else:
                 for part in parts[:granularity]:
-                    lookup = '%s__%s' % (field_name, part)
+                    lookup = f'{field_name}__{part}'
                     yield lookup, getattr(value, part)
         else:
             # TODO: this part should be documented as it involves recursion
@@ -188,7 +186,7 @@ else:
             Borrowed from http://flask.pocoo.org/snippets/5/
             """
             if encoding:
-                encoder = "%s/%s" % (codec, encoding)
+                encoder = f"{codec}/{encoding}"
             else:
                 encoder = codec
             result = []

@@ -1,8 +1,8 @@
 django-autoslug
 ~~~~~~~~~~~~~~~
 
-.. image:: https://img.shields.io/travis/justinmayer/django-autoslug.svg
-    :target: https://travis-ci.org/justinmayer/django-autoslug
+.. image:: https://img.shields.io/github/actions/workflow/status/justinmayer/django-autoslug/main.yml?branch=master
+    :target: https://github.com/justinmayer/django-autoslug/actions
 
 .. image:: https://img.shields.io/pypi/format/django-autoslug.svg
     :target: https://pypi.python.org/pypi/django-autoslug
@@ -34,9 +34,9 @@ The field is highly configurable.
 Requirements
 ------------
 
-*Python 3.5+ or PyPy*.
+*Python 3.9+ or PyPy*.
 
-*Django 1.11* or higher.
+*Django 3.2* or higher.
 
 It may be possible to successfully use django-autoslug in other environments
 but they are not tested.
@@ -45,6 +45,13 @@ but they are not tested.
 
   PyPy3 is not officially supported only because there were some problems with
   permissions and ``__pycache__`` on CI unrelated to django-autoslug itself.
+
+Installation
+------------
+
+.. code-block:: python
+
+    python -m pip install django-autoslug
 
 Examples
 --------

@@ -1,5 +1,3 @@
-# coding: utf-8
-#
 #  Copyright (c) 2018-present Justin Mayer
 #  Copyright (c) 2008—2016 Andy Mikhailenko
 #
@@ -38,10 +36,10 @@ class AutoSlugFieldTestCase(TestCase):
         greeting = 'Hello world!'
         a = ModelWithUniqueSlug(name=greeting)
         a.save()
-        assert a.slug == u'hello-world'
+        assert a.slug == 'hello-world'
         b = ModelWithUniqueSlug(name=greeting)
         b.save()
-        assert b.slug == u'hello-world-2'
+        assert b.slug == 'hello-world-2'
 
     def test_unique_slug_fk(self):
         sm1 = SimpleModel.objects.create(name='test')
@@ -49,29 +47,29 @@ class AutoSlugFieldTestCase(TestCase):
         sm3 = SimpleModel.objects.create(name='test2')
         greeting = 'Hello world!'
         a = ModelWithUniqueSlugFK.objects.create(name=greeting, simple_model=sm1)
-        assert a.slug == u'hello-world'
+        assert a.slug == 'hello-world'
         b = ModelWithUniqueSlugFK.objects.create(name=greeting, simple_model=sm2)
-        assert b.slug == u'hello-world-2'
+        assert b.slug == 'hello-world-2'
         c = ModelWithUniqueSlugFK.objects.create(name=greeting, simple_model=sm3)
-        assert c.slug == u'hello-world'
+        assert c.slug == 'hello-world'
         d = ModelWithUniqueSlugFK.objects.create(name=greeting, simple_model=sm1)
-        assert d.slug == u'hello-world-3'
+        assert d.slug == 'hello-world-3'
         sm3.name = 'test'
         sm3.save()
-        assert c.slug == u'hello-world'
+        assert c.slug == 'hello-world'
         c.save()
-        assert c.slug == u'hello-world-4'
+        assert c.slug == 'hello-world-4'
 
     def test_unique_slug_fk_null(self):
         "See issue #13"
         sm1 = SimpleModel.objects.create(name='test')
         a = ModelWithUniqueSlugFKNull.objects.create(name='test', simple_model=sm1)
-        assert a.slug == u'test'
+        assert a.slug == 'test'
 
         b = ModelWithUniqueSlugFKNull.objects.create(name='test')
-        assert b.slug == u'test'
+        assert b.slug == 'test'
         c = ModelWithUniqueSlugFKNull.objects.create(name='test', simple_model=sm1)
-        assert c.slug == u'test-2'
+        assert c.slug == 'test-2'
 
     @unittest.skipIf('PyPy' in sys.version, PYPY_DATE_FUNC_SKIP_MSG)
     def test_unique_slug_date(self):
@@ -80,9 +78,9 @@ class AutoSlugFieldTestCase(TestCase):
         c = ModelWithUniqueSlugDate(slug='test', date=datetime.date(2009, 9, 10))
         for m in a,b,c:
             m.save()
-        assert a.slug == u'test'
-        assert b.slug == u'test-2'
-        assert c.slug == u'test'
+        assert a.slug == 'test'
+        assert b.slug == 'test-2'
+        assert c.slug == 'test'
 
     @unittest.skipIf('PyPy' in sys.version, PYPY_DATE_FUNC_SKIP_MSG)
     @override_settings(USE_TZ=True, DEFAULT_TIMEZONE='US/Pacific')
@@ -98,9 +96,9 @@ class AutoSlugFieldTestCase(TestCase):
         c = ModelWithUniqueSlugDate(slug='test', date=different_day)
         for m in a,b,c:
             m.save()
-        assert a.slug == u'test'
-        assert b.slug == u'test-2'
-        assert c.slug == u'test'
+        assert a.slug == 'test'
+        assert b.slug == 'test-2'
+        assert c.slug == 'test'
 
     @unittest.skipIf('PyPy' in sys.version, PYPY_DATE_FUNC_SKIP_MSG)
     def test_unique_slug_day(self):
@@ -109,9 +107,9 @@ class AutoSlugFieldTestCase(TestCase):
         c = ModelWithUniqueSlugDay(slug='test', date=datetime.date(2009, 9, 10))
         for m in a,b,c:
             m.save()
-        assert a.slug == u'test'
-        assert b.slug == u'test-2'
-        assert c.slug == u'test'
+        assert a.slug == 'test'
+        assert b.slug == 'test-2'
+        assert c.slug == 'test'
 
     @unittest.skipIf('PyPy' in sys.version, PYPY_DATE_FUNC_SKIP_MSG)
     def test_unique_slug_month(self):
@@ -120,9 +118,9 @@ class AutoSlugFieldTestCase(TestCase):
         c = ModelWithUniqueSlugMonth(slug='test', date=datetime.date(2009, 10, 9))
         for m in a,b,c:
             m.save()
-        assert a.slug == u'test'
-        assert b.slug == u'test-2'
-        assert c.slug == u'test'
+        assert a.slug == 'test'
+        assert b.slug == 'test-2'
+        assert c.slug == 'test'
 
     @unittest.skipIf('PyPy' in sys.version, PYPY_DATE_FUNC_SKIP_MSG)
     def test_unique_slug_year(self):
@@ -131,9 +129,9 @@ class AutoSlugFieldTestCase(TestCase):
         c = ModelWithUniqueSlugYear(slug='test', date=datetime.date(2010, 9,  9))
         for m in a,b,c:
             m.save()
-        assert a.slug == u'test'
-        assert b.slug == u'test-2'
-        assert c.slug == u'test'
+        assert a.slug == 'test'
+        assert b.slug == 'test-2'
+        assert c.slug == 'test'
 
     def test_long_name(self):
         long_name = 'x' * 250
@@ -148,7 +146,7 @@ class AutoSlugFieldTestCase(TestCase):
         assert len(a.slug) == 50    # original slug is cropped by field length
         b = ModelWithLongNameUnique(name=long_name)
         b.save()
-        assert b.slug[-3:] == u'x-2'    # uniqueness is forced
+        assert b.slug[-3:] == 'x-2'    # uniqueness is forced
         assert len(b.slug) == 50        # slug is cropped
 
     def test_nullable(self):
@@ -166,11 +164,11 @@ class AutoSlugFieldTestCase(TestCase):
 
     def test_callable(self):
         a = ModelWithCallable.objects.create(name='larch')
-        assert a.slug == u'the-larch'
+        assert a.slug == 'the-larch'
 
     def test_callable_attr(self):
         a = ModelWithCallableAttr.objects.create(name='albatross')
-        assert a.slug == u'spam-albatross-and-spam'
+        assert a.slug == 'spam-albatross-and-spam'
 
     def test_custom_primary_key(self):
         # just check if models are created without exceptions
@@ -178,17 +176,17 @@ class AutoSlugFieldTestCase(TestCase):
                                                      name='name used in slug')
         b = ModelWithCustomPrimaryKey.objects.create(custom_primary_key='b',
                                                      name='name used in slug')
-        assert a.slug == u'name-used-in-slug'
+        assert a.slug == 'name-used-in-slug'
 
     def test_custom_slugifier(self):
         a = ModelWithCustomSlugifier.objects.create(slug='hello world!')
         b = ModelWithCustomSlugifier.objects.create(slug='hello world!')
-        assert b.slug == u'hello_world-2'
+        assert b.slug == 'hello_world-2'
 
     def test_custom_separator(self):
         a = ModelWithCustomSeparator.objects.create(slug='hello world!')
         b = ModelWithCustomSeparator.objects.create(slug='hello world!')
-        assert b.slug == u'hello-world_2'
+        assert b.slug == 'hello-world_2'
 
     def test_self_reference(self):
         a = ModelWithReferenceToItself(slug='test')
@@ -230,18 +228,40 @@ class AutoSlugFieldTestCase(TestCase):
         with self.assertRaises(ValueError, msg=errmsg):
             a.save()
 
+    def test_unique_with_boolean_field(self):
+        a = ModelWithBooleanInUniqueWith.objects.create(name='test', bool=True)
+        b = ModelWithBooleanInUniqueWith.objects.create(name='test', bool=False)
+        c = ModelWithBooleanInUniqueWith.objects.create(name='test', bool=False)
+        d = ModelWithBooleanInUniqueWith.objects.create(name='test', bool=True)
+
+        self.assertEqual(a.slug, 'test')
+        self.assertEqual(b.slug, 'test')
+        self.assertEqual(c.slug, 'test-2')
+        self.assertEqual(d.slug, 'test-2')
+
+    def test_unique_with_boolean_field_false_true(self):
+        a = ModelWithBooleanInUniqueWith.objects.create(name='test', bool=False)
+        b = ModelWithBooleanInUniqueWith.objects.create(name='test', bool=True)
+        c = ModelWithBooleanInUniqueWith.objects.create(name='test', bool=False)
+        d = ModelWithBooleanInUniqueWith.objects.create(name='test', bool=True)
+
+        self.assertEqual(a.slug, 'test')
+        self.assertEqual(b.slug, 'test')
+        self.assertEqual(c.slug, 'test-2')
+        self.assertEqual(d.slug, 'test-2')
+
     def test_acceptable_empty_dependency(self):
         model = ModelWithAcceptableEmptyDependency
         instances = [model.objects.create(slug='hello') for x in range(0,2)]
-        assert [x.slug for x in model.objects.all()] == [u'hello', u'hello-2']
+        assert [x.slug for x in model.objects.all()] == ['hello', 'hello-2']
 
     def test_auto_update_enabled(self):
         a = ModelWithAutoUpdateEnabled(name='My name')
         a.save()
-        assert a.slug == u'my-name'
+        assert a.slug == 'my-name'
         a.name = 'My new name'
         a.save()
-        assert a.slug == u'my-new-name'
+        assert a.slug == 'my-new-name'
 
     @unittest.expectedFailure
     def test_slug_space_shared_integrity_error(self):
@@ -254,23 +274,54 @@ class AutoSlugFieldTestCase(TestCase):
     def test_shared_slug_space(self):
         a = SharedSlugSpace(name='My name')
         a.save()
-        assert a.slug == u'my-name'
+        assert a.slug == 'my-name'
         b = ModelWithSlugSpaceShared(name='My name')
         b.save()
-        assert b.slug == u'my-name-2'
+        assert b.slug == 'my-name-2'
 
     def test_autoslug_with_manager_name(self):
         a = NonDeletableModelWithUniqueSlug.objects.create(name='My name')
-        self.assertEqual(a.slug, u'my-name')
+        self.assertEqual(a.slug, 'my-name')
         a.delete()
         b = NonDeletableModelWithUniqueSlug.objects.create(name='My name')
-        self.assertEqual(b.slug, u'my-name-2')
+        self.assertEqual(b.slug, 'my-name-2')
 
     def test_deconstruct_with_manager(self):
         a = SharedSlugSpace(name='TestName')
         a.save()
         _, _, _, kwargs = a._meta.get_field('slug').deconstruct()
         self.assertNotIn('manager', kwargs)
+
+    def test_crop_with_trailing_dash(self):
+        long_name = 'xxxx ' * 20
+        a = ModelWithLongName(name=long_name)
+        a.save()
+        assert len(a.slug) == 49        # slug cropped, last char removed
+        assert a.slug[-4:] == 'xxxx'    # dash removed
+
+        long_name = 'xxxx-' * 20
+        a = ModelWithLongName(name=long_name)
+        a.save()
+        assert len(a.slug) == 49        # slug cropped, last char removed
+        assert a.slug[-4:] == 'xxxx'    # dash removed
+
+        long_name = 'xxxx_' * 20
+        a = ModelWithLongName(name=long_name)
+        a.save()
+        assert len(a.slug) == 49        # slug cropped, last char removed
+        assert a.slug[-4:] == 'xxxx'    # underscore removed
+
+    def test_crop_with_trailing_dash_unique(self):
+        long_name = 'xxxx ' * 20
+        a = ModelWithLongNameUnique(name=long_name)
+        a.save()
+        assert len(a.slug) == 49        # slug cropped, last char removed
+        assert a.slug[-4:] == 'xxxx'    # dash removed
+
+        b = ModelWithLongNameUnique(name=long_name)
+        b.save()
+        assert len(b.slug) == 50         # slug cropped
+        assert b.slug[-4:] == 'xx-2'    # unique without dash
 
 
 class AutoSlugModelTranslationTestCase(TestCase):

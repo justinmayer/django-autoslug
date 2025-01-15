@@ -1,5 +1,3 @@
-# coding: utf-8
-#
 #  Copyright (c) 2018-present Justin Mayer
 #  Copyright (c) 2008—2016 Andy Mikhailenko
 #
@@ -16,11 +14,6 @@ from django.db.models.fields import SlugField
 from django.db.models.signals import post_save
 
 # 3rd-party
-try:
-    from south.modelsinspector import introspector
-except ImportError:
-    introspector = lambda self: [], {}
-
 try:
     from modeltranslation import utils as modeltranslation_utils
 except ImportError:
@@ -205,7 +198,7 @@ class AutoSlugField(SlugField):
         # addition to ASCII letters. Defaults to False.
         self.allow_unicode = kwargs.pop('allow_unicode', False)
 
-        # When using model inheritence, set manager to search for matching
+        # When using model inheritance, set manager to search for matching
         # slug values
         self.manager = kwargs.pop('manager', None)
         self.manager_name = kwargs.pop('manager_name', None)
@@ -214,7 +207,7 @@ class AutoSlugField(SlugField):
         super(SlugField, self).__init__(*args, **kwargs)
 
     def deconstruct(self):
-        name, path, args, kwargs = super(AutoSlugField, self).deconstruct()
+        name, path, args, kwargs = super().deconstruct()
 
         if self.max_length == 50:
             kwargs.pop('max_length', None)
@@ -283,7 +276,7 @@ class AutoSlugField(SlugField):
                 slug = ''
 
         if slug:
-            slug = utils.crop_slug(self, slug)
+            slug = self.slugify(utils.crop_slug(self, slug))
 
             # ensure the slug is unique (if required)
             if self.unique or self.unique_with:
@@ -301,16 +294,6 @@ class AutoSlugField(SlugField):
             post_save.connect(modeltranslation_update_slugs, sender=type(instance))
 
         return slug
-
-
-    def south_field_triple(self):
-        "Returns a suitable description of this field for South."
-        args, kwargs = introspector(self)
-        kwargs.update({
-            'populate_from': 'None' if callable(self.populate_from) else repr(self.populate_from),
-            'unique_with': repr(self.unique_with)
-        })
-        return ('autoslug.fields.AutoSlugField', args, kwargs)
 
 
 def modeltranslation_update_slugs(sender, **kwargs):

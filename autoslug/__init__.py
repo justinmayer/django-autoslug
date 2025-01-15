@@ -1,5 +1,3 @@
-# coding: utf-8
-#
 #  Copyright (c) 2018-present Justin Mayer
 #  Copyright (c) 2008—2016 Andy Mikhailenko
 #
@@ -12,5 +10,5 @@
 from autoslug.fields import AutoSlugField
 
 
-__version__ = '1.9.7'
+__version__ = '1.9.9'
 __all__ = ['AutoSlugField']

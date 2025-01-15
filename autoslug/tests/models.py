@@ -1,5 +1,3 @@
-# coding: utf-8
-#
 #  Copyright (c) 2018-present Justin Mayer
 #  Copyright (c) 2008—2016 Andy Mikhailenko
 #
@@ -127,6 +125,12 @@ class ModelWithAcceptableEmptyDependency(Model):
     slug = AutoSlugField(unique_with='date')
 
 
+class ModelWithBooleanInUniqueWith(Model):
+    name = CharField(max_length=200)
+    bool = BooleanField()
+    slug = AutoSlugField(unique_with='bool', populate_from='name')
+
+
 class ModelWithAutoUpdateEnabled(Model):
     name = CharField(max_length=200)
     slug = AutoSlugField(populate_from='name', always_update=True)
@@ -162,7 +166,7 @@ class ModeltranslationOne(Model):
 
 class NonDeletedObjects(Manager):
     def get_queryset(self):
-        return super(NonDeletedObjects, self).get_queryset().filter(is_deleted=False)
+        return super().get_queryset().filter(is_deleted=False)
 
 
 class AbstractModelWithCustomManager(Model):

@@ -38,4 +38,6 @@ generally made django-autoslug better:
 * Éloi Rivard
 * Peter Baumgartner
 * Jernej Kos
+* Sutrisno Efendi
+* Jeffrey de Lange
 * Your Name Here ;)
