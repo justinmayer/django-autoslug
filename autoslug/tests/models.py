@@ -178,7 +178,7 @@ class AbstractModelWithCustomManager(Model):
     class Meta:
         abstract = True
 
-    def delete(self, using=None):
+    def delete(self, **kwargs):
         self.is_deleted = True
         self.save()
 
