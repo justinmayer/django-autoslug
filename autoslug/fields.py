@@ -9,6 +9,7 @@
 #
 
 # django
+from typing import Any, Dict, List, Tuple
 from django.conf import settings
 from django.db.models.fields import SlugField
 from django.db.models.signals import post_save
@@ -243,7 +244,7 @@ class AutoSlugField(SlugField):
 
         return name, path, args, kwargs
 
-    def pre_save(self, instance, add):
+    def pre_save(self, instance, add) -> str | None:
 
         # get currently entered slug
         value = self.value_from_object(instance)
