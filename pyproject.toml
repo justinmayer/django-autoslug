@@ -58,6 +58,7 @@ docs = [
 ]
 
 [project.urls]
+Funding = "https://buymeacoffee.com/mpasternak"
 Homepage = "https://github.com/iplweb/django-autoslug-iplweb/"
 Repository = "https://github.com/iplweb/django-autoslug-iplweb/"
 Upstream = "https://github.com/justinmayer/django-autoslug/"
