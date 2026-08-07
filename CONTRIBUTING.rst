@@ -22,12 +22,29 @@ your contribution is reviewed and accepted ASAP.
 
 4. Add documentation (comments, docstrings, hints for users).
 
-5. Add a ``RELEASE.md`` file in the root of the project that contains the
-   release type (major, minor, patch) and a summary of the changes that will be
-   used as the release changelog entry. For example::
+5. Submit a pull request.  Reference the original issue there.
 
-       Release type: patch
+Releasing (maintainers)
+~~~~~~~~~~~~~~~~~~~~~~~
 
-       Add pyproject.toml to MANIFEST.in
+Releases are cut from a tag, not from a push to ``master``.
 
-6. Submit a pull request.  Reference the original issue there.
+1. Add a section for the new version at the top of ``CHANGELOG.rst``; it
+   becomes the body of the GitHub release.
+
+2. Bump, commit and tag in one step::
+
+       uv run bump-my-version bump patch    # or minor / major
+
+   This rewrites ``version`` in ``pyproject.toml``, ``__version__`` in
+   ``autoslug/__init__.py`` and ``current_version`` in the bumpversion
+   configuration, then tags ``v<new version>``.
+
+3. Push the commit and the tag::
+
+       git push && git push --tags
+
+Pushing the tag runs ``.github/workflows/release.yml``, which re-checks that
+the tag agrees with all three version strings, builds the sdist and the wheel,
+uploads them to PyPI over trusted publishing (no API token involved) and
+creates the GitHub release.
