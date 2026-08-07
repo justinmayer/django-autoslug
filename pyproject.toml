@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "django-autoslug-iplweb"
-version = "1.9.10"
+version = "1.10.0"
 description = "An automated slug field for Django."
 readme = "README.rst"
 requires-python = ">=3.12"
