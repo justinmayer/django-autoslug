@@ -31,6 +31,19 @@ on:
     tags:
       - "v*"
 
+  # A release is a chain -- build, upload to PyPI, cut the GitHub release --
+  # and a tag pushed once fires that chain exactly once. When a later link
+  # breaks there is nothing left to re-trigger it: that is how tag v1.9.10 came
+  # to exist with a release that was never created, and the only way out was to
+  # delete the tag and push it again. This trigger is the way out that does not
+  # involve moving tags.
+  #
+  # Start it from Actions -> Release -> Run workflow with "Use workflow from"
+  # set to the TAG (v1.10.0, ...), never to master: every step below reads the
+  # version out of the ref name, and the first step of the build job refuses a
+  # branch rather than publish something meaningless.
+  workflow_dispatch:
+
 # Read-only by default. The two jobs below widen this for themselves only.
 permissions:
   contents: read
@@ -41,6 +54,22 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # The dispatch dialog's "Use workflow from" list offers branches as well
+      # as tags, and it defaults to master. Started from a branch,
+      # github.ref_name is "master" rather than a version, so the tag/tree
+      # check below would compare the package against a tag named "master" and
+      # the release job would try to cut a GitHub release off a branch name.
+      # Stop here, and say what to do instead.
+      - name: Refuse to run from anything but a tag
+        if: github.ref_type != 'tag'
+        env:
+          REF_NAME: ${{ github.ref_name }}
+          REF_TYPE: ${{ github.ref_type }}
+        run: |
+          echo "::error::Started from $REF_TYPE '$REF_NAME', but this workflow releases a tagged version."
+          echo "::error::Re-run it from Actions -> Release -> Run workflow with 'Use workflow from' set to the TAG (e.g. v1.10.0), not to a branch."
+          exit 1
+
       - uses: actions/checkout@v5
 
       - name: Install uv
