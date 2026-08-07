@@ -1,7 +1,11 @@
 Authors
 ~~~~~~~
 
-The django-autoslug library is currently maintained by:
+The django-autoslug-iplweb fork is maintained by:
+
+* Michał Pasternak <michal.dtz@gmail.com>
+
+The upstream django-autoslug library is maintained by:
 
 * Justin Mayer <https://justinmayer.com/>
 

@@ -1,26 +1,25 @@
 django-autoslug
 ~~~~~~~~~~~~~~~
 
-.. image:: https://img.shields.io/github/actions/workflow/status/justinmayer/django-autoslug/main.yml?branch=master
-    :target: https://github.com/justinmayer/django-autoslug/actions
+.. image:: https://github.com/iplweb/django-autoslug-iplweb/actions/workflows/main.yml/badge.svg?branch=master
+    :target: https://github.com/iplweb/django-autoslug-iplweb/actions/workflows/main.yml
+    :alt: Build status
 
-.. image:: https://img.shields.io/pypi/format/django-autoslug.svg
-    :target: https://pypi.python.org/pypi/django-autoslug
+.. image:: https://img.shields.io/pypi/v/django-autoslug-iplweb.svg
+    :target: https://pypi.python.org/pypi/django-autoslug-iplweb
+    :alt: PyPI version
 
-.. image:: https://img.shields.io/pypi/status/django-autoslug.svg
-    :target: https://pypi.python.org/pypi/django-autoslug
+.. image:: https://img.shields.io/badge/python-3.12%20%7C%203.13%20%7C%203.14-blue.svg
+    :target: https://www.python.org/
+    :alt: Supported Python versions
 
-.. image:: https://img.shields.io/pypi/v/django-autoslug.svg
-    :target: https://pypi.python.org/pypi/django-autoslug
+.. image:: https://img.shields.io/badge/django-5.2%20%7C%206.0%20%7C%206.1-green.svg
+    :target: https://www.djangoproject.com/
+    :alt: Supported Django versions
 
-.. image:: https://img.shields.io/pypi/pyversions/django-autoslug.svg
-    :target: https://pypi.python.org/pypi/django-autoslug
-
-.. image:: https://img.shields.io/pypi/dd/django-autoslug.svg
-    :target: https://pypi.python.org/pypi/django-autoslug
-
-.. image:: https://readthedocs.org/projects/django-autoslug/badge/?version=latest
-    :target: https://django-autoslug.readthedocs.io/en/latest/
+.. image:: https://img.shields.io/pypi/l/django-autoslug-iplweb.svg
+    :target: https://github.com/iplweb/django-autoslug-iplweb/blob/master/COPYING.LESSER
+    :alt: License: LGPL-3.0
 
 Django-autoslug is a reusable Django library that provides an improved
 slug field which can automatically:
@@ -34,17 +33,37 @@ The field is highly configurable.
 Requirements
 ------------
 
-*Python 3.9+ or PyPy*.
+*Python 3.12, 3.13, or 3.14.*
 
-*Django 3.2* or higher.
+*Django 5.2 LTS, 6.0, or 6.1.*
 
-It may be possible to successfully use django-autoslug in other environments
-but they are not tested.
+Supported versions matrix
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. note::
+Every cell below is exercised in CI on each push:
 
-  PyPy3 is not officially supported only because there were some problems with
-  permissions and ``__pycache__`` on CI unrelated to django-autoslug itself.
++----------------+--------------+--------------+--------------+
+|                | Python 3.12  | Python 3.13  | Python 3.14  |
++================+==============+==============+==============+
+| Django 5.2 LTS | ✓            | ✓            | ✓            |
++----------------+--------------+--------------+--------------+
+| Django 6.0     | ✓            | ✓            | ✓            |
++----------------+--------------+--------------+--------------+
+| Django 6.1     | ✓            | ✓            | ✓            |
++----------------+--------------+--------------+--------------+
+
+Older Python and Django versions reached end-of-life and are no longer
+supported by this fork:
+
+* Django 4.2 LTS (extended support ended 2026-04-07)
+* Django 5.0 / 5.1 (mainstream support ended)
+* Python 3.9 / 3.10 / 3.11 (Django 5.2 minimum is 3.10, but Django 6.0
+  and 6.1 require 3.12+, so the intersection is 3.12+)
+
+When Django 6.2 LTS ships, it will be added to the matrix.
+
+It may be possible to successfully use django-autoslug-iplweb in other
+environments but they are not tested.
 
 Installation
 ------------

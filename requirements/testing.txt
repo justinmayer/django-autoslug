@@ -1,3 +1,0 @@
--r basic.txt
--r devel.txt
--r optional.txt

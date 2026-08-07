@@ -60,3 +60,13 @@ docs/_build/
 
 # Pycharm
 .idea
+
+# uv / virtualenv
+.venv/
+uv.lock
+
+# pytest
+.pytest_cache/
+
+# ruff
+.ruff_cache/

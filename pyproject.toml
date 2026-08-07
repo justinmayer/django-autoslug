@@ -1,21 +1,125 @@
-[tool.poetry]
-name = "django-autoslug"
-version = "1.9.9"
-description = "AutoSlugField for Django"
-authors = ["Justin Mayer <entroP@gmail.com>"]
-readme = "README.rst"
-license = "LGPL-3.0"
-keywords = ["django", "model"]
-
-[tool.autopub]
-project-name = "django-autoslug"
-git-username = "botpub"
-git-email = "52496925+botpub@users.noreply.github.com"
-changelog-file = "CHANGELOG.rst"
-changelog-header = "~~~~~~~~~"
-version-strings = ["autoslug/__init__.py"]
-tag-prefix = "v"
-build-system = "setuptools"
-
 [build-system]
-requires = ["setuptools >= 40.6.0", "wheel"]
+requires = ["setuptools>=75.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "django-autoslug-iplweb"
+version = "1.10.0"
+description = "An automated slug field for Django."
+readme = "README.rst"
+requires-python = ">=3.12"
+license = {text = "GNU Lesser General Public License (LGPL), Version 3"}
+authors = [
+    {name = "Justin Mayer", email = "entrop@gmail.com"},
+]
+keywords = ["django", "field", "slug", "auto", "unique", "transliteration", "i18n"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Web Environment",
+    "Framework :: Django",
+    "Framework :: Django :: 5.2",
+    "Framework :: Django :: 6.0",
+    "Framework :: Django :: 6.1",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: GNU Library or Lesser General Public License (LGPL)",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Text Processing :: General",
+]
+dependencies = [
+    "django>=5.2",
+]
+
+[project.optional-dependencies]
+cyrillic = ["pytils>=0.2"]
+translitcodec = ["translitcodec>=0.3"]
+dev = [
+    "coverage>=5.0.3",
+    "django-modeltranslation>=0.10",
+    "pytils>=0.2",
+    "Unidecode>=0.04",
+    "pytz",
+    "bump-my-version>=0.28",
+    "pytest>=8.0",
+    "pytest-django>=4.8",
+    "pytest-cov>=5.0",
+    "testcontainers[postgres]>=4.8",
+    "psycopg[binary]>=3.2",
+]
+docs = [
+    "Sphinx>=7.0",
+    "docutils>=0.7",
+    "Pygments>=1.2",
+]
+
+[project.urls]
+Funding = "https://buymeacoffee.com/mpasternak"
+Homepage = "https://github.com/iplweb/django-autoslug-iplweb/"
+Repository = "https://github.com/iplweb/django-autoslug-iplweb/"
+Upstream = "https://github.com/justinmayer/django-autoslug/"
+
+[tool.setuptools]
+packages = ["autoslug"]
+
+[tool.ruff]
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "W"]
+
+[tool.ruff.lint.per-file-ignores]
+# Pre-existing upstream legacy code; not in scope to reformat.
+"autoslug/fields.py" = ["E501", "E721"]
+"autoslug/utils.py" = ["E501", "E731", "F401", "F821"]
+"autoslug/tests/tests.py" = ["E501", "F403", "F405", "F841"]
+"autoslug/tests/models.py" = ["E501", "E731", "F401"]
+"autoslug/settings.py" = ["E501", "F401"]
+"autoslug/__init__.py" = ["F401"]
+"docs/conf.py" = ["E501", "E402"]
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "autoslug.tests.settings"
+python_files = ["tests.py", "test_*.py"]
+
+# Releasing: `uv run bump-my-version bump {patch,minor,major}` rewrites the
+# three version strings below, commits, and tags v<new version>. Pushing that
+# tag runs .github/workflows/release.yml, which publishes to PyPI over trusted
+# publishing. (The previous autopub configuration lived here; it published
+# from every push to master and is gone.)
+[tool.bumpversion]
+current_version = "1.10.0"
+commit = true
+tag = true
+# Spelled out because release.yml triggers on "v*" -- the tag shape is part of
+# the release contract, not an incidental default.
+tag_name = "v{new_version}"
+parse = '(?P<major>\d+)\.(?P<minor>\d+)\.(?P<patch>\d+)(\-(?P<release>[a-z]+))?'
+serialize = [
+    "{major}.{minor}.{patch}-{release}",
+    "{major}.{minor}.{patch}",
+]
+
+[tool.bumpversion.parts.release]
+optional_value = "gamma"
+values = ["dev", "gamma"]
+
+[[tool.bumpversion.files]]
+filename = "pyproject.toml"
+search = 'version = "{current_version}"'
+replace = 'version = "{new_version}"'
+
+[[tool.bumpversion.files]]
+filename = "pyproject.toml"
+search = 'current_version = "{current_version}"'
+replace = 'current_version = "{new_version}"'
+
+[[tool.bumpversion.files]]
+filename = "autoslug/__init__.py"
+search = "__version__ = '{current_version}'"
+replace = "__version__ = '{new_version}'"
