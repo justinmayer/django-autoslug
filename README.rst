@@ -13,7 +13,7 @@ django-autoslug
     :target: https://www.python.org/
     :alt: Supported Python versions
 
-.. image:: https://img.shields.io/badge/django-5.2%20%7C%206.0-green.svg
+.. image:: https://img.shields.io/badge/django-5.2%20%7C%206.0%20%7C%206.1-green.svg
     :target: https://www.djangoproject.com/
     :alt: Supported Django versions
 
@@ -35,7 +35,7 @@ Requirements
 
 *Python 3.12, 3.13, or 3.14.*
 
-*Django 5.2 LTS or 6.0.*
+*Django 5.2 LTS, 6.0, or 6.1.*
 
 Supported versions matrix
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -49,6 +49,8 @@ Every cell below is exercised in CI on each push:
 +----------------+--------------+--------------+--------------+
 | Django 6.0     | ✓            | ✓            | ✓            |
 +----------------+--------------+--------------+--------------+
+| Django 6.1     | ✓            | ✓            | ✓            |
++----------------+--------------+--------------+--------------+
 
 Older Python and Django versions reached end-of-life and are no longer
 supported by this fork:
@@ -56,9 +58,9 @@ supported by this fork:
 * Django 4.2 LTS (extended support ended 2026-04-07)
 * Django 5.0 / 5.1 (mainstream support ended)
 * Python 3.9 / 3.10 / 3.11 (Django 5.2 minimum is 3.10, but Django 6.0
-  requires 3.12+, so the intersection is 3.12+)
+  and 6.1 require 3.12+, so the intersection is 3.12+)
 
-When Django 6.1 / 6.2 LTS ship, they will be added to the matrix.
+When Django 6.2 LTS ships, it will be added to the matrix.
 
 It may be possible to successfully use django-autoslug-iplweb in other
 environments but they are not tested.
