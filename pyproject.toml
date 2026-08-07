@@ -97,7 +97,7 @@ version-strings = ["autoslug/__init__.py"]
 tag-prefix = "v"
 
 [tool.bumpversion]
-current_version = "1.9.9"
+current_version = "1.10.0"
 commit = true
 tag = false
 parse = '(?P<major>\d+)\.(?P<minor>\d+)\.(?P<patch>\d+)(\-(?P<release>[a-z]+))?'
