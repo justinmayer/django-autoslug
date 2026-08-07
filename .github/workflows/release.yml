@@ -1,0 +1,171 @@
+name: Release
+
+# Publishes to PyPI when a v* tag is pushed.
+#
+# Uses PyPI Trusted Publishing (OpenID Connect): GitHub mints a short-lived
+# token for this exact workflow, so no API token exists in this repository to
+# leak or to rotate. One-time setup on PyPI -- Manage project -> Publishing ->
+# Add a new publisher:
+#
+#   PyPI project name: django-autoslug-iplweb
+#   Owner:             iplweb
+#   Repository name:   django-autoslug-iplweb
+#   Workflow name:     release.yml
+#   Environment name:  pypi
+#
+# Until that publisher exists, the upload fails with
+# "invalid-publisher: valid token, but no corresponding publisher".
+#
+# Releasing is therefore:
+#
+#   uv run bump-my-version bump patch   # rewrites the three version strings,
+#                                       # commits, and tags v<new version>
+#   git push && git push --tags
+#
+# The tag must agree with the version in the tree; the build job refuses to
+# publish otherwise, because a mismatch means one of the two is a mistake and
+# a wrong version cannot be taken back off PyPI.
+
+on:
+  push:
+    tags:
+      - "v*"
+
+# Read-only by default. The two jobs below widen this for themselves only.
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build distributions
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+
+      - name: Set up Python
+        run: uv python install 3.13
+
+      # This package carries the version in three places -- pyproject
+      # `version`, autoslug/__init__.__version__ and the bumpversion
+      # `current_version` bookkeeping field. bump-my-version keeps them in
+      # step, but a hand-made tag or a half-finished bump can desynchronise
+      # them, and then the wheel goes out under the wrong number. Check all
+      # three against the tag before anything is built.
+      - name: Refuse to publish a tag that disagrees with the tree
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          uv run --no-project python - <<'PY'
+          import os, pathlib, re, sys, tomllib
+
+          tag = os.environ["TAG"].removeprefix("v")
+          pyproject = tomllib.loads(pathlib.Path("pyproject.toml").read_text())
+
+          found = {
+              "pyproject [project] version": pyproject["project"]["version"],
+              "pyproject [tool.bumpversion] current_version":
+                  pyproject["tool"]["bumpversion"]["current_version"],
+              "autoslug/__init__.py __version__": re.search(
+                  r"""^__version__ = ['"]([^'"]+)['"]""",
+                  pathlib.Path("autoslug/__init__.py").read_text(),
+                  re.M,
+              ).group(1),
+          }
+
+          bad = {k: v for k, v in found.items() if v != tag}
+          for k, v in found.items():
+              print(f"{k}: {v}")
+          if bad:
+              for k, v in bad.items():
+                  print(f"::error::tag {os.environ['TAG']} disagrees with {k} ({v})")
+              sys.exit(1)
+          print(f"Publishing {tag} as {os.environ['TAG']}")
+          PY
+
+      - name: Install dependencies
+        run: uv sync --all-extras
+
+      # The full Python x Django matrix already ran on master before the tag
+      # was pushed; this is a cheap guard against tagging a commit that was
+      # never green.
+      - name: Run the test suite (SQLite)
+        run: uv run --no-sync pytest -q
+
+      - name: Build sdist and wheel
+        run: uv build
+
+      - name: Check metadata renders on PyPI
+        run: uvx twine check dist/*
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: dist
+          path: dist/
+
+  publish:
+    name: Publish to PyPI
+    needs: build
+    runs-on: ubuntu-latest
+
+    # Named environment so the trusted publisher on PyPI can be scoped to it,
+    # and so a protection rule can gate uploads if one is ever wanted.
+    environment:
+      name: pypi
+      url: https://pypi.org/p/django-autoslug-iplweb
+
+    permissions:
+      # Required for Trusted Publishing: this is what lets GitHub mint the
+      # OIDC token PyPI exchanges for an upload credential. Nothing else in
+      # this workflow needs it, which is why publishing is its own job.
+      id-token: write
+
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: dist
+          path: dist/
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+
+  github-release:
+    name: Create the GitHub release
+    needs: publish
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write # required to create the release
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/download-artifact@v8
+        with:
+          name: dist
+          path: dist/
+
+      # Uses the workflow's own GITHUB_TOKEN. The previous autopub-based
+      # release used a hand-managed GH_TOKEN secret, which returned 401 and
+      # left tag v1.9.10 behind with nothing on PyPI; the built-in token
+      # cannot expire out from under the workflow.
+      - name: Create the release with this version's changelog section
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          # Pull just this version's section out of CHANGELOG.rst, which is
+          # laid out as "1.10.0 - 2026-08-07" followed by an underline.
+          awk -v v="$version" '
+            index($0, v " - ") == 1 { found = 1; underline = 1; next }
+            found && underline      { underline = 0; next }
+            found && /^[0-9]+\.[0-9]+/ { exit }
+            found { print }
+          ' CHANGELOG.rst > notes.md
+          test -s notes.md || echo "See CHANGELOG.rst." > notes.md
+          gh release create "$GITHUB_REF_NAME" dist/* \
+            --title "$GITHUB_REF_NAME" \
+            --notes-file notes.md

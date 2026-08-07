@@ -1,6 +1,12 @@
 name: build
 
+# Tests only. Publishing lives in release.yml and is driven by a v* tag --
+# see the comment at the top of that file.
 on: [push, pull_request]
+
+# Nothing here needs more than the checkout it reads.
+permissions:
+  contents: read
 
 env:
   PYTEST_ADDOPTS: "--color=yes"
@@ -87,35 +93,3 @@ jobs:
         env:
           DJANGO_SETTINGS_MODULE: autoslug.tests.settings_postgres
         run: uv run --no-sync pytest -v
-
-  deploy:
-    name: Deploy
-    environment: Deployment
-    needs: [test, test-postgres]
-    runs-on: ubuntu-latest
-    if: github.ref=='refs/heads/master' && github.event_name!='pull_request'
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Install release tools
-        run: python -m pip install "autopub[github]==0.4.1" build twine
-
-      - name: Check release
-        id: check_release
-        run: echo "release=$(autopub check)" >> $GITHUB_OUTPUT
-
-      - name: Publish
-        if: ${{ steps.check_release.outputs.release=='' }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-          TWINE_USERNAME: "__token__"
-          TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
-        run: |
-          git remote set-url origin "https://${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}"
-          autopub deploy

@@ -87,19 +87,18 @@ select = ["E", "F", "W"]
 DJANGO_SETTINGS_MODULE = "autoslug.tests.settings"
 python_files = ["tests.py", "test_*.py"]
 
-[tool.autopub]
-project-name = "django-autoslug-iplweb"
-git-username = "botpub"
-git-email = "52496925+botpub@users.noreply.github.com"
-changelog-file = "CHANGELOG.rst"
-changelog-header = "~~~~~~~~~"
-version-strings = ["autoslug/__init__.py"]
-tag-prefix = "v"
-
+# Releasing: `uv run bump-my-version bump {patch,minor,major}` rewrites the
+# three version strings below, commits, and tags v<new version>. Pushing that
+# tag runs .github/workflows/release.yml, which publishes to PyPI over trusted
+# publishing. (The previous autopub configuration lived here; it published
+# from every push to master and is gone.)
 [tool.bumpversion]
 current_version = "1.10.0"
 commit = true
-tag = false
+tag = true
+# Spelled out because release.yml triggers on "v*" -- the tag shape is part of
+# the release contract, not an incidental default.
+tag_name = "v{new_version}"
 parse = '(?P<major>\d+)\.(?P<minor>\d+)\.(?P<patch>\d+)(\-(?P<release>[a-z]+))?'
 serialize = [
     "{major}.{minor}.{patch}-{release}",
